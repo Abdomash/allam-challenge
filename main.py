@@ -1,4 +1,5 @@
 import random
+from LLMInterface import LLM_Interface
 from VerseGenerator import VerseGenerator
 from RAG import RAG
 
@@ -12,9 +13,8 @@ def infer_qafiya(prompt):
 def infer_length(prompt):
     return random.randint(8, 15) * 2
 
-def generate_qasida(prompt):
+def generate_qasida(prompt, verse_generator):
     rag = RAG()
-    verse_generator = VerseGenerator(rag)
 
     wazn = infer_wazn(prompt)
     qafiya = infer_qafiya(prompt)
@@ -32,6 +32,12 @@ def generate_qasida(prompt):
     return output
 
 if __name__ == "__main__":
-    prompt = "Your verse prompt here"
-    qasida = generate_qasida(prompt)
-    print(qasida)
+    llm = LLM_Interface()
+    rag = RAG("qawafi-database.json")
+    verse_generator = VerseGenerator(rag)
+    while True:
+        prompt = input("Enter a prompt: ")
+        if not prompt or prompt == "exit":
+            break
+        qasida = generate_qasida(prompt, verse_generator)
+        print(qasida)
