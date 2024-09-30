@@ -1,19 +1,20 @@
+import random
 from VerseGenerator import VerseGenerator
 from RAG import RAG
 
 # Initialize logical units
 def infer_wazn(prompt):
-    return 0
+    return None
 
 def infer_qafiya(prompt):
-    return 0
+    return None
 
 def infer_length(prompt):
-    return 0
+    return random.randint(8, 15) * 2
 
 def generate_qasida(prompt):
     rag = RAG()
-    verse_generator = VerseGenerator(rag, feedback_generator)
+    verse_generator = VerseGenerator(rag)
 
     wazn = infer_wazn(prompt)
     qafiya = infer_qafiya(prompt)
