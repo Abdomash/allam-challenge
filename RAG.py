@@ -1,38 +1,39 @@
 import json
 
 class RAG:
-    def __init__(self, filepath):
+    def __init__(self, filepath, qafiya):
         self.message = "RAG initialized"
         self.db = None
         with open(filepath, 'r', encoding="utf-8") as f:
             self.db = json.load(f)["data"]
+        self.update(None, qafiya)
     
     def wrap(self, prompt, feedback=None):
         return f'''
-        <info>{self.message}</info>
+        <QafiyaExamples>{self.message}</QafiyaExamples>
         <prompt>{prompt}</prompt>
         <feedback>{feedback}</feedback>
         '''
     
-    def update(self, new_qafiya):
-        self.message = self.setQafiya(new_qafiya)
+    def update(self, wazn, qafiya):
+        self.message = self.setQafiya(qafiya)
 
     def setQafiya(self, qafiya):
-        def is_valid(word):
+        def processed(word):
             if word.endswith(qafiya):
-                return True, word
+                return word
             if qafiya[-1] == "ا" and word.endswith(qafiya[0]):
-                return True, word+"ا"
+                return word+"ا"
             if qafiya[-1] == "ه" and word.endswith(qafiya[0]):
-                return True, word+"ه"
+                return word+"ه"
             if qafiya[-1] == "ه" and word.endswith("ة"):
-                return True, word.replace("ة" , f"ه")
-            return False, None
+                return word.replace("ة" , f"ه")
+            return None
         
         output = []
         for word in self.db:
-            v, new_word = is_valid(word)
-            if v:
+            new_word = processed(word)
+            if new_word:
                 output.append(new_word)
 
         return output

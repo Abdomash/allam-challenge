@@ -3,6 +3,7 @@ import json
 
 def combine_json_files(directory, output_file):
     combined_data = {'data': []}
+    diacritics = ['َ', 'ً', 'ُ', 'ٌ', 'ِ', 'ٍ', 'ْ', 'ّ']
 
     # Iterate through all files in the directory
     for filename in os.listdir(directory):
@@ -18,6 +19,8 @@ def combine_json_files(directory, output_file):
                     for item in file_data.get('data', []):
                         text = item['name'].replace(" ", "")
                         if (text):
+                            for diacritic in diacritics:
+                                text = text.replace(diacritic, "")
                             if (len(text) > 2 and text[0:2] == "ال"):
                                 text = text[2:]
                             combined_data['data'].append(text)
@@ -28,6 +31,9 @@ def combine_json_files(directory, output_file):
             print(f"Processed file {filename}...")
 
     combined_data['data'].sort(key=lambda name: name[::-1])
+    print(f"With duplicates: {len(combined_data['data'])}")
+    combined_data['data'] = list(set(combined_data['data']))
+    print(f"W/o  duplicates: {len(combined_data['data'])}")
 
     # Write the combined data to the output file
     with open(output_file, 'w', encoding='utf-8') as out_file:
