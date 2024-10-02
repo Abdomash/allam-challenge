@@ -1,6 +1,6 @@
 import random
-from LLMInterface import LLM_Interface
-from VerseGenerator import VerseGenerator
+from LLMInterface import ALLAM
+from ShatrGenerator import ShatrGenerator
 from RAG import RAG
 
 # Initialize logical units
@@ -13,31 +13,30 @@ def infer_qafiya(prompt):
 def infer_length(prompt):
     return random.randint(8, 15) * 2
 
-def generate_qasida(prompt, verse_generator):
-    rag = RAG()
-
+def generate_qasida(prompt, shatr_generator):
     wazn = infer_wazn(prompt)
     qafiya = infer_qafiya(prompt)
     length = infer_length(prompt)
     
-    shdrs = []
+    shatrs = []
     for shdr_idx in range(length):
-        verse = verse_generator.generate_verse(prompt, wazn, qafiya, shdr_idx % 2)
-        shdrs.append(verse)
+        shatr = shatr_generator.generate_shatr(prompt, wazn, qafiya, shdr_idx % 2)
+        shatrs.append(shatr)
     
     output = ""
-    for i, shdr in enumerate(shdrs):
+    for i, shdr in enumerate(shatrs):
         output += shdr + ("\n" if i % 2 else "")
     
     return output
 
 if __name__ == "__main__":
-    llm = LLM_Interface()
+    api_key = input("Enter API key: ")
+    llm = ALLAM(api_key)
     rag = RAG("qawafi-database.json")
-    verse_generator = VerseGenerator(rag)
+    shatr_generator = ShatrGenerator(rag)
     while True:
         prompt = input("Enter a prompt: ")
         if not prompt or prompt == "exit":
             break
-        qasida = generate_qasida(prompt, verse_generator)
+        qasida = generate_qasida(prompt, shatr_generator)
         print(qasida)
