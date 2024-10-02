@@ -1,0 +1,3 @@
+ipykernel
+ibm-watsonx-ai
+ibm-cloud-sdk-core
