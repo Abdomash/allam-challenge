@@ -11,7 +11,7 @@ def infer_qafiya(prompt):
     return None
 
 def infer_length(prompt):
-    return random.randint(8, 15) * 2
+    return 6
 
 def generate_qasida(prompt, shatr_generator):
     wazn = infer_wazn(prompt)
@@ -19,21 +19,20 @@ def generate_qasida(prompt, shatr_generator):
     length = infer_length(prompt)
     
     shatrs = []
-    for shdr_idx in range(length):
-        shatr = shatr_generator.generate_shatr(prompt, wazn, qafiya, shdr_idx % 2)
+    for shatr_idx in range(length):
+        shatr = shatr_generator.generate_shatr(prompt, wazn, qafiya, shatrs)
         shatrs.append(shatr)
     
     output = ""
     for i, shdr in enumerate(shatrs):
-        output += shdr + ("\n" if i % 2 else "")
+        output += shdr + ("\n" if i % 2 else " # ")
     
     return output
 
 if __name__ == "__main__":
     api_key = input("Enter API key: ")
     llm = ALLAM(api_key)
-    rag = RAG("qawafi-database.json")
-    shatr_generator = ShatrGenerator(rag)
+    shatr_generator = ShatrGenerator(llm)
     while True:
         prompt = input("Enter a prompt: ")
         if not prompt or prompt == "exit":
