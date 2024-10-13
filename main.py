@@ -1,5 +1,5 @@
 import random
-from LLMInterface import ALLAM
+from LLMInterface import ALLAM_GENERATOR, FakeGenerator
 from ShatrGenerator import ShatrGenerator
 from RAG import RAG
 
@@ -25,13 +25,14 @@ def generate_qasida(prompt, shatr_generator):
     
     output = ""
     for i, shdr in enumerate(shatrs):
-        output += shdr + ("\n" if i % 2 else " # ")
+        output += shdr + ("\n" if i % 2 else " \t\t ")
     
     return output
 
 if __name__ == "__main__":
     api_key = input("Enter API key: ")
-    llm = ALLAM(api_key)
+    # llm = ALLAM(api_key)
+    llm = FakeGenerator()
     shatr_generator = ShatrGenerator(llm)
     while True:
         prompt = input("Enter a prompt: ")

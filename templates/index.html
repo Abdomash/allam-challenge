@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <title>الشاعر علّام</title>
+    <style>
+      body {
+        font-family: "Noto Naskh Arabic", sans-serif;
+        font-size: 1.5em;
+        line-height: 1.9;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        direction: rtl;
+      }
+      h1 {
+        margin-top: 20px;
+      }
+      .chat-box {
+        width: 80%;
+        max-width: 1000px;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+      }
+      .chat-log {
+        max-height: 900px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column-reverse; /* Newest messages appear at the top */
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        background-color: #fafafa;
+      }
+      .chat-entry {
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+      }
+      .user-prompt {
+        width: fit-content;
+        align-self: flex-start;
+        font-weight: bold;
+        color: #2c3e50;
+        background-color: #dff9fb;
+        padding: 10px;
+        max-width: 70%;
+        border-radius: 10px;
+        word-wrap: break-word;
+        margin-right: 30px;
+      }
+      .llm-response {
+        width: fit-content;
+        text-align: right;
+        align-self: flex-end;
+        color: #34495e;
+        background-color: #f7d794;
+        padding: 10px;
+        border-radius: 10px;
+        max-width: 70%;
+        word-wrap: break-word;
+        white-space: pre;
+        margin-left: 30px;
+      }
+      input[type="text"] {
+        width: 80%;
+        max-width: 800px;
+        background-color: white;
+        padding: 20px;
+        margin-left: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .send-button, .clear-button {
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .send-button {
+            background-color: #2980b9;
+        }
+        .send-button:hover {
+            background-color: #3498db;
+        }
+        .clear-button {
+            background-color: #e74c3c;
+        }
+        .clear-button:hover {
+            background-color: #c0392b;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>تحدث مع الشاعر علّام</h1>
+    <div class="chat-box">
+      <div class="chat-log">
+        <!-- Display the chat log in reverse order -->
+        {% for entry in chat_log %}
+        <div class="chat-entry">
+          <p class="user-prompt">{{ entry.prompt }}</p>
+          <p class="llm-response">{{ entry.response }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      <form method="POST">
+        <label for="prompt">ادخل طلبك هنا:</label><br /><br />
+        <input type="text" name="prompt" placeholder="عطني شعر عن الوطن..." required></input><br /><br />
+        <input type="submit" value="Send" placeholder="أرسل" class="send-button"/>
+      </form>
+      <form method="POST" action="/clear">
+        <input type="submit" value="مسح المحادثة" class="clear-button">
+    </form>
+    </div>
+  </body>
+</html>
