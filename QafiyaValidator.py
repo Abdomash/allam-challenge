@@ -10,4 +10,4 @@ class QafiyaValidator:
         #     return True
         # else:
         #     return False
-        return True
+        return (current_qafiya == previous_qafiya)
