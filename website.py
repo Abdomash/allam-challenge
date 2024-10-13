@@ -1,15 +1,21 @@
+from ShatrGenerator import ShatrGenerator
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_session import Session
+
+from LLMInterface import FakeGenerator
+from main import generate_qasida
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SESSION_TYPE'] = 'filesystem'  # Use server-side session
 Session(app)
 
-# Your function that takes a prompt and returns a response
+llm = FakeGenerator()
+shatr_generator = ShatrGenerator(llm)
+
 def process_prompt(prompt):
-    # Replace with your LLM code
-    return f"وعليكم السلام"
+    qasida = generate_qasida(prompt, shatr_generator)
+    return qasida
 
 @app.route('/', methods=['GET', 'POST'])
 def chat():
@@ -27,6 +33,11 @@ def chat():
 
 @app.route('/clear', methods=['POST'])
 def clear_chat():
+    global llm
+    global shatr_generator
+    llm = FakeGenerator()
+    shatr_generator = ShatrGenerator(llm)
+    
     session.pop('chat_log', None)  # Remove the chat log from session
     return redirect(url_for('chat'))
 

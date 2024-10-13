@@ -3,16 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100..900&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <title>الشاعر علّام</title>
     <style>
       body {
-        font-family: "Noto Sans Arabic", sans-serif;
+        font-family: "Noto Naskh Arabic", sans-serif;
+        font-size: 1.5em;
+        line-height: 1.9;
         background-color: #f4f4f4;
         margin: 0;
         padding: 0;
@@ -25,8 +24,8 @@
         margin-top: 20px;
       }
       .chat-box {
-        width: 50%;
-        max-width: 800px;
+        width: 80%;
+        max-width: 1000px;
         background-color: white;
         padding: 20px;
         border-radius: 10px;
@@ -34,7 +33,7 @@
         margin-top: 20px;
       }
       .chat-log {
-        max-height: 700px;
+        max-height: 900px;
         overflow-y: auto;
         display: flex;
         flex-direction: column-reverse; /* Newest messages appear at the top */
@@ -71,10 +70,12 @@
         border-radius: 10px;
         max-width: 70%;
         word-wrap: break-word;
+        white-space: pre;
         margin-left: 30px;
       }
       input[type="text"] {
-        width: 680px;
+        width: 80%;
+        max-width: 800px;
         background-color: white;
         padding: 20px;
         margin-left: 20px;
