@@ -43,3 +43,12 @@ class ShatrGenerator:
             self.rag.update(qafiya)
             valid = True
         return shatr
+
+
+    def gen(self):
+        feedback = ""
+        for i in range(10):
+            self.generate_shatr(feedback=feedback)
+            feedback = self.feedback_generator.generate_feedback()
+
+            

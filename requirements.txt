@@ -3,3 +3,16 @@ ibm-watsonx-ai
 ibm-cloud-sdk-core
 flask
 flask-session
+numpy==1.19.5
+matplotlib==3.3.3
+pandas==1.1.5
+ruamel.yaml==0.16.12
+tensorboard==2.4.0
+diacritization-evaluation==0.5
+tqdm==4.56.0
+pyarabic
+keras==2.12
+tensorflow==2.12
+termcolor
+ipython
+scikit-learn
