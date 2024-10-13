@@ -55,6 +55,7 @@ class RAG:
                 return word+"ه"
             if qafiya[-1] == "ه" and word.endswith("ة"):
                 return word.replace("ة" , f"ه")
+            #TODO: waw + ya edge cases (ignore - only if using verbs + nouns)
             return None
         
         output = []

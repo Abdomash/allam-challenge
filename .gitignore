@@ -2,3 +2,7 @@ original-qawafi-database
 __pycache__
 .DS_Store
 .venv
+deep-learning-models
+CA_MSA.base.cbhg
+model.zip
+deep-learning-models.zip
