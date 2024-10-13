@@ -10,8 +10,8 @@ class RAG:
             self.db = json.load(f)["data"]
         self.setQafiya(qafiya)
     
-    def wrap(self, prompt, previous_shatrs=None, feedback=None):
-        full_text = ""
+    def wrap(self, prompt, previous_shatrs=None, feedback=None, current_attempt=None):
+        full_text = "<s> [INST]"
         full_text += "اكتب شطر واحد لجزء من قصيدة.\n"
         
         if self.qafiya:
@@ -30,11 +30,17 @@ class RAG:
         
         if previous_shatrs:
             full_text += "هنا الشطور السابقة:\n"
-            full_text += f"{previous_shatrs}\n"
+            full_text += '\n'.join(previous_shatrs)
+            full_text += '\n'
 
         if feedback:
             full_text += "هنا بعض النصائح على هذا اخر شطر تم ادخاله:\n"
             full_text += f"{feedback}\n"
+        
+        full_text += " [/INST]"
+
+        if current_attempt:
+            full_text += current_attempt
 
         return full_text
     
@@ -66,3 +72,7 @@ class RAG:
 
         return output
         
+if __name__ == "__main__":
+    r = RAG()
+    r.update("ب")
+    print(r.wrap("اكتب لي قصيدة عن الفراق", ["في بحور الغي والإثم غريقا"], None, "أخي"))

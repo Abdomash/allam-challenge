@@ -36,7 +36,7 @@ class ALLAM_GENERATOR(LLM_INTERFACE_GENERATOR):
     def generate(self, prompt):
         url = BASE_URL + "v1/text/generation?version=2024-08-30"
         self.body = {
-            "input": f"<s> [INST] {prompt} [/INST]",
+            "input": prompt,
             "model_id": self.model_id,
             "project_id": self.project_id,
             "parameters": self.parameters

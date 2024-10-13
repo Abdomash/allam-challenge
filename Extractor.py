@@ -10,10 +10,11 @@ class Extractor:
     def extract(self, shatr): #returns qafiya type, wazn type
         output = self.analyzer.analyze(shatrs=[shatr], short_qafiyah=True, override_tashkeel=True, predict_era=False, predict_closest=False, predict_theme=False)
         #qafiya_type = output["qafiyah"]
+        print(output["diacritized"][-1])
         wazn_name = output["meter"]
         aroodi_writing = output["arudi_style"][-1][0]
-        wazn_info = output["closest_patterns"][-1] #('arood 1/0', 0.9953)
-        
+        #wazn_info = output["closest_patterns"][-1] #('arood 1/0', 0.9953)
+        wazn_info = output["patterns_mismatches"][-1]
 
         #extract qafiyah from last 2 letters without diacritics
         diacritics = ['َ', 'ً', 'ُ', 'ٌ', 'ِ', 'ٍ', 'ْ', 'ّ']
@@ -50,3 +51,5 @@ if __name__ == "__main__":
     print(e.extract("أخي أنت حرٌّ وَراءَ السدود"))
 
     print(e.extract("في بحور الغي والإثم غريقا"))
+
+    print(e.extract("والروح تبكي لوعة وفراق "))
