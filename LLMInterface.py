@@ -2,13 +2,14 @@ import requests
 from abc import ABC, abstractmethod
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
-class LLM_Interface(ABC):
+BASE_URL = "https://eu-de.ml.cloud.ibm.com/ml/"
+
+class LLM_INTERFACE_GENERATOR(ABC):
     @abstractmethod
-    def generate(self, prompt, **kwargs) -> str:
+    def generate(self, prompt) -> str:
         pass
 
-BASE_URL = "https://eu-de.ml.cloud.ibm.com/ml/"
-class ALLAM(LLM_Interface):
+class ALLAM_GENERATOR(LLM_INTERFACE_GENERATOR):
     def __init__(self, API_KEY):
         self.model_id = "sdaia/allam-1-13b-instruct"
         self.project_id = "0a443bde-e9c6-41dc-b1f2-65c6292030e4"
@@ -32,7 +33,7 @@ class ALLAM(LLM_Interface):
             "repetition_penalty": 2,
         }
 
-    def generate(self, prompt, **kwargs):
+    def generate(self, prompt):
         url = BASE_URL + "v1/text/generation?version=2024-08-30"
         self.body = {
             "input": f"<s> [INST] {prompt} [/INST]",
@@ -49,7 +50,7 @@ class ALLAM(LLM_Interface):
     
 
 # A fake LLM for testing
-class FakeLLM(LLM_Interface):
+class FakeGenerator(LLM_INTERFACE_GENERATOR):
     def __init__(self):
         self.i = 0
         self.lines = '''قَالَتْ فُطَيْمَةُ حَلِّ شِعْرَكَ مَدْحَهُ
@@ -89,8 +90,74 @@ class FakeLLM(LLM_Interface):
 حتى أباحَ ديارَهمْ فَأَبَارَهُمْ
 فَعَمُوا فهمْ لا يَهْتَدونَ سَبِيلا'''.split("\n")
     
-
-    def generate(self, prompt, **kwargs):
+    def generate(self, prompt):
         line = self.lines[self.i].strip()
         self.i = (self.i + 1) % len(self.lines)
         return line
+
+class LLM_INTERFACE_CRITIC(ABC):
+    @abstractmethod
+    def critique(self, shatr, previous_shatrs=None) -> str:
+        pass
+
+class FakeCritic(LLM_INTERFACE_CRITIC):
+    def critique(self, shatr, previous_shatrs=None):
+        return "This is a fake critic."
+
+
+class ALLAM_CRITIC(LLM_INTERFACE_CRITIC):
+    def __init__(self, API_KEY):
+        self.model_id = "sdaia/allam-1-13b-instruct"
+        self.project_id = "0a443bde-e9c6-41dc-b1f2-65c6292030e4"
+
+        # get authentication token
+        authenticator = IAMAuthenticator(API_KEY)
+        token = authenticator.token_manager.get_token()
+        self.headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {token}'
+        }
+
+        # set default parameters
+        self.parameters = {
+            "decoding_method": "sample",
+            "max_new_tokens": 200,
+            "temperature": 1,
+            "top_k": 50,
+            "top_p": 1,
+            "repetition_penalty": 2,
+        }
+
+    def critique(self, shatr, previous_shatrs=None, **kwargs):
+        url = BASE_URL + "v1/text/generation?version=2024-08-30"
+
+        prompt = self.build_critique_prompt(shatr, previous_shatrs)
+
+        self.body = {
+            "input": f"<s> [INST] {prompt} [/INST]",
+            "model_id": self.model_id,
+            "project_id": self.project_id,
+            "parameters": self.parameters
+        }
+
+        response = requests.post(url, headers=self.headers, json=self.body)
+        response.raise_for_status()
+        
+        data = response.json()
+        return data['results'][0]['generated_text']
+
+    def build_critique_prompt(self, shatr, previous_shatrs=None):
+        prompt = ""
+
+        prompt += "اليك هذه القصيدة:\n"        
+        prompt += " ".join(str(x) for x in previous_shatrs)
+        prompt += f" {shatr}\n" 
+        prompt += "ما رأيك في اخر شطر من هذه القصيدة؟"
+        prompt += "الشطر المقصود هو: "
+        prompt += f"{shatr}\n"
+        prompt += "استخرج ٣ نقاط عن البيت اللتي يمكننا تطويرها."
+        prompt += "اكتب النقاط بشكل مختصر وواضح." 
+
+        return prompt
+
