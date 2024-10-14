@@ -20,11 +20,11 @@ class RAG:
         self.setQafiya(qafiya)
     
     def wrap(self, prompt, previous_shatrs=None, feedback=None, current_attempt=None):
-        full_text = "<s> [INST]"
-        full_text += "اكتب شطر واحد لجزء من قصيدة.\n"
-        
+        full_text = "<s> [INST]\n"
         if self.poet:
             full_text += f"{self.poet['description']}\n"
+
+        full_text += "اكتب شطر واحد لجزء من قصيدة.\n"
 
         if self.qafiya:
             full_text += f" قافية القصيدة هي '{self.qafiya}'. "

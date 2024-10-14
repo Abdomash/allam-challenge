@@ -1,7 +1,20 @@
+import os
 import random
 from LLMInterface import ALLAM_GENERATOR, FakeGenerator
 from ShatrGenerator import ShatrGenerator
 from RAG import RAG
+
+def load_env(file_path):
+    """Load environment variables from a .env file."""
+    with open(file_path) as f:
+        for line in f:
+            # Remove comments and whitespace
+            line = line.strip()
+            if line and not line.startswith('#'):
+                key, value = line.split('=', 1)
+                os.environ[key] = value
+
+load_env(".env");
 
 # Initialize logical units
 def infer_wazn(prompt):
@@ -27,8 +40,8 @@ def generate_qasida(prompt, shatr_generator, wazn=None, qafiya=None, length=None
     return shatrs
 
 if __name__ == "__main__":
-    # api_key = input("Enter API key: ")
-    # llm = ALLAM_GENERATOR(api_key)
+    api_key = os.environ.get("API_KEY")
+    llm = ALLAM_GENERATOR(api_key)
     llm = FakeGenerator()
     shatr_generator = ShatrGenerator(llm)
     while True:
