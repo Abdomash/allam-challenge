@@ -2,27 +2,37 @@ import json
 import random
 
 class RAG:
-    def __init__(self, filepath="qawafi-database.json", qafiya=None):
+    def __init__(self, qawafi_filepath="qawafi-database.json", qafiya=None, poet=None):
         self.qafiya = qafiya
-        self.message = None
+        self.qafiya_examples = None
         self.db = None
-        with open(filepath, 'r', encoding="utf-8") as f:
+        self.poet = None
+        with open(qawafi_filepath, 'r', encoding="utf-8") as f:
             self.db = json.load(f)["data"]
+
+        if poet:
+            poets = load_poets()
+            poet_data = next((item for item in poets if item["name"] == poet), None)
+            if not poet_data:
+                raise ValueError(f"Poet not found in database: Could not find {poet} in 'poet.json'")
+            self.poet = poet_data
+
         self.setQafiya(qafiya)
     
     def wrap(self, prompt, previous_shatrs=None, feedback=None, current_attempt=None):
         full_text = "<s> [INST]"
         full_text += "اكتب شطر واحد لجزء من قصيدة.\n"
         
+        if self.poet:
+            full_text += f"{self.poet['description']}\n"
+
         if self.qafiya:
             full_text += f" قافية القصيدة هي '{self.qafiya}'. "
 
-        if self.message:
+        if self.qafiya_examples:
             full_text += "هنا بعض الامثلة لكلمات تنتهي بهذه القافية: \n"
-            # full_text += "<QafiyaExamples>"
-            full_text += ", ".join(random.sample(self.message, 10))
+            full_text += ", ".join(random.sample(self.qafiya_examples, 10))
             full_text += "\n"
-            # full_text += "</QafiyaExamples>"
         
         if prompt:
             full_text += f"هنا الطلب اللي وضعه المستخدم:\n"
@@ -45,7 +55,7 @@ class RAG:
         return full_text
     
     def update(self, qafiya):
-        self.message = self.setQafiya(qafiya)
+        self.qafiya_examples = self.setQafiya(qafiya)
         self.qafiya = qafiya
 
     def setQafiya(self, qafiya):
@@ -72,7 +82,17 @@ class RAG:
 
         return output
         
+def load_poets():
+    with open("poets.json", 'r', encoding="utf-8") as f:
+        poets = json.load(f)["poets"]
+        return poets
+
+
 if __name__ == "__main__":
     r = RAG()
     r.update("ب")
     print(r.wrap("اكتب لي قصيدة عن الفراق", ["في بحور الغي والإثم غريقا"], None, "أخي"))
+    print('\n\n') 
+    r = RAG(poet="المتنبي")
+    r.update("ق")
+    print(r.wrap("اكتب لي قصيدة عن الفراق", ["في بحور الغي والإثم غريقا"], None))

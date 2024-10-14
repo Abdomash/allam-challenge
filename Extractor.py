@@ -1,28 +1,31 @@
 import sys
 
+sys.path.append("qawafi/qawafi_server/Arabic_Diacritization") #lib should be ...../Arabi
+sys.path.append("qawafi/qawafi_server")
+sys.path.append("qawafi/qawafi_server/Bohour")
+from qawafi_server.bait_analysis import BaitAnalysis
+
 class Extractor:
     def __init__(self):
-        sys.path.append("qawafi/qawafi_server/Arabic_Diacritization") #lib should be ...../Arabi
-        sys.path.append("qawafi/qawafi_server")
-        sys.path.append("qawafi/qawafi_server/Bohour")
-        from qawafi_server.bait_analysis import BaitAnalysis
         self.analyzer = BaitAnalysis("qawafi/qawafi_server/Arabic_Diacritization/config/test.yml")
 
     def extract(self, shatr): #returns qafiya type, wazn type
         output = self.analyzer.analyze(shatrs=[shatr], short_qafiyah=True, override_tashkeel=True, predict_era=False, predict_closest=False, predict_theme=False)
         #qafiya_type = output["qafiyah"]
-        print(output["diacritized"][-1])
         wazn_name = output["meter"]
         aroodi_writing = output["arudi_style"][-1][0]
         #wazn_info = output["closest_patterns"][-1] #('arood 1/0', 0.9953)
         wazn_info = output["patterns_mismatches"][-1]
+        qafiya = self.extract_qafiya(aroodi_writing)
+        return qafiya, wazn_name, wazn_info
 
+    def extract_qafiya(self, aroodi_writing):
         #extract qafiyah from last 2 letters without diacritics
         diacritics = ['َ', 'ً', 'ُ', 'ٌ', 'ِ', 'ٍ', 'ْ', 'ّ']
         without_dia = aroodi_writing + ""
         for dia in diacritics:
             without_dia = without_dia.replace(dia, "")
-        
+
         if without_dia[-1] in [ "ا" ,  "ه"]:
             qafiya = without_dia[-2:]
         else:
@@ -35,10 +38,8 @@ class Extractor:
         #edge case with hamza+waw, hamza+alif maqsoora, ..
         #also needs RAG updating
 
-        return qafiya, wazn_name, wazn_info
-
-
 if __name__ == "__main__":
+    # Tests
     e = Extractor()
 
     print(e.extract("أَلا رُبَّ يَوْمٍ لَكَ مِنْهُنَّ صَالِحٍ"))

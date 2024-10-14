@@ -27,10 +27,11 @@ class ALLAM_GENERATOR(LLM_INTERFACE_GENERATOR):
         self.parameters = {
             "decoding_method": "sample",
             "max_new_tokens": 30,
-            "temperature": 1,
+            "temperature": 0.7,
             "top_k": 50,
             "top_p": 1,
-            "repetition_penalty": 2,
+            "repetition_penalty": 1.5,
+            "stop_sequences": ["\n"],
         }
 
     def generate(self, prompt):
@@ -121,12 +122,9 @@ class ALLAM_CRITIC(LLM_INTERFACE_CRITIC):
 
         # set default parameters
         self.parameters = {
-            "decoding_method": "sample",
+            "decoding_method": "greedy",
             "max_new_tokens": 200,
-            "temperature": 1,
-            "top_k": 50,
-            "top_p": 1,
-            "repetition_penalty": 2,
+            "repetition_penalty": 1.1,
         }
 
     def critique(self, shatr, previous_shatrs=None, **kwargs):
@@ -150,9 +148,11 @@ class ALLAM_CRITIC(LLM_INTERFACE_CRITIC):
     def build_critique_prompt(self, shatr, previous_shatrs=None):
         prompt = ""
 
-        prompt += "اليك هذه القصيدة:\n"        
-        prompt += " ".join(str(x) for x in previous_shatrs)
-        prompt += f" {shatr}\n" 
+        if previous_shatrs is not None:
+            prompt += "اليك هذه القصيدة:\n"        
+            prompt += " ".join(str(x) for x in previous_shatrs)
+            prompt += f" {shatr}\n" 
+
         prompt += "ما رأيك في اخر شطر من هذه القصيدة؟"
         prompt += "الشطر المقصود هو: "
         prompt += f"{shatr}\n"

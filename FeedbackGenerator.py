@@ -1,5 +1,5 @@
 class FeedbackGenerator:
-    def generate_feedback(self, type, invalid_item, expected_item, invalid_shatr,):
+    def generate_feedback(self, type, invalid_item, expected_item, invalid_shatr):
         if type == "qafiya":
             return self.qafiya_feedback(invalid_item, expected_item, invalid_shatr)
         

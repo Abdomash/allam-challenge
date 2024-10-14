@@ -6,7 +6,7 @@ from LLMInterface import FakeGenerator
 from main import generate_qasida
 
 from time import sleep
-
+import json
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -16,8 +16,22 @@ Session(app)
 llm = FakeGenerator()
 shatr_generator = ShatrGenerator(llm)
 
+def load_poets():
+    POETS_FILEPATH = 'poets.json'
+    poets = {}
+    with open(POETS_FILEPATH, 'r', encoding='utf-8') as f:
+        poets = json.load(f)
+    return [item['name'] for item in poets['poets']]
+
+BAHRS = ['الكامل', 'الوافر', 'الطويل', 'البسيط' ]
+POETS = load_poets() 
+
 def process_prompt(prompt, selected_bahr, selected_poet):
-    qasida = generate_qasida(prompt, shatr_generator)
+    if selected_poet == 'None':
+        selected_poet = None
+    if selected_bahr == 'None':
+        selected_bahr = None
+    qasida = generate_qasida(prompt, shatr_generator, wazn=selected_bahr, poet=selected_poet)
     return qasida
 
 @app.route('/', methods=['GET', 'POST'])
@@ -28,12 +42,13 @@ def chat():
     if request.method == 'POST':
         user_input = request.form['prompt']
         selected_bahr = request.form['bahr']
-        output = process_prompt(user_input, selected_bahr, None)
+        selected_poet = request.form['poet']
+        output = process_prompt(user_input, selected_bahr, selected_poet)
         # Append to the chat log
         session['chat_log'].append({'prompt': user_input, 'response': output})
     
     # Reverse the chat log to display newest messages first
-    return render_template('index.html', chat_log=reversed(session['chat_log']))
+    return render_template('index.html', chat_log=reversed(session['chat_log']), poets=POETS, bahrs=BAHRS)
 
 @app.route('/clear', methods=['POST'])
 def clear_chat():

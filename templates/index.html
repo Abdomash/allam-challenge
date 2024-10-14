@@ -229,20 +229,18 @@
       <label for="bahr">اختر البحر: <span class="muted">(اختياري)</span></label><br />
       <select name="bahr" id="bahr" type="radio">
         <option value="None">--</option>
-        <option value="الطويل">الطويل</option>
-        <option value="الكامل">الكامل</option>
-        <option value="الوافر">الوافر</option>
-        <option value="البسيط">البسيط</option>
+        {% for bahr in bahrs %}
+        <option value="{{ bahr }}">{{ bahr }}</option>
+        {% endfor %}
       </select><br />
       <br />
 
       <label for="poet">اختر الشاعر:<span class="muted">(اختياري)</span></label><br />
       <select name="poet" id="poet" type="radio">
         <option value="None">--</option>
-        <option value="امرؤ القيس">امرؤ القيس</option>
-        <option value="أحمد شوقي">أحمد شوقي</option>
-        <option value="المتنبي">المتنبي</option>
-        <option value="عنترة بن شداد">عنترة بن شداد</option>
+        {% for poet in poets %}
+        <option value="{{ poet }}">{{ poet }}</option>
+        {% endfor %}
       </select><br />
       <br />
 
