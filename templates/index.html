@@ -1,129 +1,278 @@
 <!DOCTYPE html>
 <html lang="ar">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    <title>الشاعر علّام</title>
-    <style>
-      body {
-        font-family: "Noto Naskh Arabic", sans-serif;
-        font-size: 1.5em;
-        line-height: 1.9;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        direction: rtl;
-      }
-      h1 {
-        margin-top: 20px;
-      }
-      .chat-box {
-        width: 80%;
-        max-width: 1000px;
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-      }
-      .chat-log {
-        max-height: 900px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column-reverse; /* Newest messages appear at the top */
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        background-color: #fafafa;
-      }
-      .chat-entry {
-        margin-bottom: 10px;
-        display: flex;
-        flex-direction: column;
-      }
-      .user-prompt {
-        width: fit-content;
-        align-self: flex-start;
-        font-weight: bold;
-        color: #2c3e50;
-        background-color: #dff9fb;
-        padding: 10px;
-        max-width: 70%;
-        border-radius: 10px;
-        word-wrap: break-word;
-        margin-right: 30px;
-      }
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>تحدث مع الشاعر علّام</title>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+    }
+
+    * {
+      font-family: "Amiri", sans-serif;
+      font-weight: 400;
+    }
+
+    body {
+      line-height: 1.9;
+      font-size: 1.5em;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      direction: rtl;
+    }
+
+    h1 {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .chat-box {
+      width: 80%;
+      max-width: 1000px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+
+    .chat-log {
+      max-height: 900px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column-reverse;
+      /* Newest messages appear at the top */
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      background-color: #fafafa;
+    }
+
+    .chat-entry {
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-prompt {
+      width: fit-content;
+      padding: 10px 20px;
+      align-self: flex-start;
+      font-weight: bold;
+      color: #2c3e50;
+      background-color: #dff9fb;
+      max-width: 70%;
+      border-radius: 10px;
+      word-wrap: break-word;
+      margin-right: 30px;
+    }
+
+    .llm-response {
+      padding: 10px 20px;
+      width: fit-content;
+      height: fit-content;
+      color: #34495e;
+      align-self: flex-end;
+      background-color: #f7d794;
+      border-radius: 10px;
+      display: grid;
+      max-width: 80%;
+      margin-left: 30px;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 40px;
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
       .llm-response {
-        width: fit-content;
-        text-align: right;
-        align-self: flex-end;
-        color: #34495e;
-        background-color: #f7d794;
-        padding: 10px;
-        border-radius: 10px;
-        max-width: 70%;
-        word-wrap: break-word;
-        white-space: pre;
-        margin-left: 30px;
+        grid-template-columns: 1fr;
       }
-      input[type="text"] {
-        width: 80%;
-        max-width: 800px;
-        background-color: white;
-        padding: 20px;
-        margin-left: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+      body {
+        font-size: 1.2em;
       }
-      .send-button, .clear-button {
-            padding: 10px 20px;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .send-button {
-            background-color: #2980b9;
-        }
-        .send-button:hover {
-            background-color: #3498db;
-        }
-        .clear-button {
-            background-color: #e74c3c;
-        }
-        .clear-button:hover {
-            background-color: #c0392b;
-        }
-    </style>
-  </head>
-  <body>
-    <h1>تحدث مع الشاعر علّام</h1>
-    <div class="chat-box">
-      <div class="chat-log">
-        <!-- Display the chat log in reverse order -->
-        {% for entry in chat_log %}
-        <div class="chat-entry">
-          <p class="user-prompt">{{ entry.prompt }}</p>
-          <p class="llm-response">{{ entry.response }}</p>
+    }
+
+    .grid-item {
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .grid-item:nth-child(odd) {
+      text-align: right;
+    }
+
+    .grid-item:nth-child(even) {
+      text-align: left;
+    }
+
+    .appear-animation {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    input[type="text"] {
+      font-size: 1em;
+      width: 80%;
+      max-width: 800px;
+      padding: 20px;
+      margin-left: 20px;
+      background-color: #dff9fb;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    }
+
+    .muted {
+      margin: 0 30px;
+      font-size: 0.8em;
+      color: #777;
+    }
+
+    select {
+      width: 80%;
+      max-width: 800px;
+      background-color: white;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-top: 10px;
+      font-size: 1em;
+      direction: rtl;
+    }
+
+    .send-button,
+    .clear-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      font-size: 1em;
+      padding: 10px 20px;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .send-button {
+      background-color: #2980b9;
+    }
+
+    .send-button:hover {
+      background-color: #3498db;
+    }
+
+    .clear-button {
+      background-color: #e74c3c;
+    }
+
+    .clear-button:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>تحدث مع الشاعر علّام</h1>
+  <div class="chat-box">
+    تاريخ الدردشة:
+    <div class="chat-log">
+      {% for entry in chat_log %}
+      <div class="chat-entry">
+        <p class="user-prompt">{{ entry.prompt }}</p>
+        <div class="llm-response">
+          {% set outer_loop = loop %}
+          {% set sequential_delay = 500 %}
+          {% set additional_delay = 300 %}
+          {% for item in entry.response %}
+          {% if outer_loop.first %}
+          <div class="grid-item appear-animation"
+            style="animation-delay: {{ loop.index0 * sequential_delay + additional_delay }}ms;">{{ item }}</div>
+          {% else %}
+          <div class="grid-item">{{ item }}</div>
+          {% endif %}
+          {% endfor %}
         </div>
-        {% endfor %}
       </div>
-      <form method="POST">
-        <label for="prompt">ادخل طلبك هنا:</label><br /><br />
-        <input type="text" name="prompt" placeholder="عطني شعر عن الوطن..." required></input><br /><br />
-        <input type="submit" value="Send" placeholder="أرسل" class="send-button"/>
-      </form>
-      <form method="POST" action="/clear">
-        <input type="submit" value="مسح المحادثة" class="clear-button">
-    </form>
+      {% endfor %}
     </div>
-  </body>
+    <form method="POST">
+
+      <label for="bahr">اختر البحر: <span class="muted">(اختياري)</span></label><br />
+      <select name="bahr" id="bahr" type="radio">
+        <option value="None">--</option>
+        <option value="الطويل">الطويل</option>
+        <option value="الكامل">الكامل</option>
+        <option value="الوافر">الوافر</option>
+        <option value="البسيط">البسيط</option>
+      </select><br />
+      <br />
+
+      <label for="poet">اختر الشاعر:<span class="muted">(اختياري)</span></label><br />
+      <select name="poet" id="poet" type="radio">
+        <option value="None">--</option>
+        <option value="امرؤ القيس">امرؤ القيس</option>
+        <option value="أحمد شوقي">أحمد شوقي</option>
+        <option value="المتنبي">المتنبي</option>
+        <option value="عنترة بن شداد">عنترة بن شداد</option>
+      </select><br />
+      <br />
+
+      <label for="prompt">ادخل طلبك هنا:</label><br />
+      <input type="text" name="prompt" placeholder="عطني شعر عن الوطن..." required></input><br />
+      <br />
+
+      <div class="align-button">
+        <button type="submit" value="إرسال" class="send-button">
+
+          <span class="material-icons md-48">
+            send
+          </span>
+          إرسال
+        </button>
+      </div>
+    </form>
+
+    <form method="POST" action="/clear">
+      <div class="align-button">
+        <button type="submit" value="مسح المحادثة" class="clear-button">
+          <span class="material-icons md-48">
+            delete
+          </span>
+          مسح المحادثة
+        </button>
+      </div>
+    </form>
+
+  </div>
+</body>
+
 </html>
