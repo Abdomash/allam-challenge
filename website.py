@@ -27,6 +27,7 @@ BAHRS = ['الكامل', 'الوافر', 'الطويل', 'البسيط' ]
 POETS = load_poets() 
 
 def process_prompt(prompt, selected_bahr, selected_poet):
+    sleep(3)
     if selected_poet == 'None':
         selected_poet = None
     if selected_bahr == 'None':
