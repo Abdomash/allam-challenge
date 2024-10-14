@@ -94,15 +94,15 @@ class BaitAnalysis:
         )
 
         print("load era classification model ...")
-        self.ERA_MODEL = create_era_theme_model()
-        self.ERA_MODEL.load_weights(
-            f"{abs_path}/deep-learning-models/era_classification_models_shorter_context/cp.ckpt"
-        )
+        #self.ERA_MODEL = create_era_theme_model()
+        #self.ERA_MODEL.load_weights(
+        #    f"{abs_path}/deep-learning-models/era_classification_models_shorter_context/cp.ckpt"
+        #)
 
-        self.ERA_TOKENIZER = tk.SentencePieceTokenizer()
-        self.ERA_TOKENIZER.load_model(
-            f"{abs_path}/deep-learning-models/era_classification_models_shorter_context/vocab.model"
-        )
+        #self.ERA_TOKENIZER = tk.SentencePieceTokenizer()
+        #self.ERA_TOKENIZER.load_model(
+        #    f"{abs_path}/deep-learning-models/era_classification_models_shorter_context/vocab.model"
+        #)
 
         print("load theme classification model ...")
         #self.THEME_MODEL = create_era_theme_model()

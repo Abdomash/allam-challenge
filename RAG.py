@@ -52,6 +52,7 @@ class RAG:
         if current_attempt:
             full_text += current_attempt
 
+        print(full_text)
         return full_text
     
     def update(self, qafiya):
@@ -69,6 +70,8 @@ class RAG:
                 return word+"ا"
             if qafiya[-1] == "ه" and word.endswith(qafiya[0]):
                 return word+"ه"
+            if qafiya[-1] == "ن" and word.endswith(qafiya[0]):
+                return word
             if qafiya[-1] == "ه" and word.endswith("ة"):
                 return word.replace("ة" , f"ه")
             #TODO: waw + ya edge cases (ignore - only if using verbs + nouns)

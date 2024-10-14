@@ -26,11 +26,11 @@ class ALLAM_GENERATOR(LLM_INTERFACE_GENERATOR):
         # set default parameters
         self.parameters = {
             "decoding_method": "sample",
-            "max_new_tokens": 30,
-            "temperature": 0.7,
-            "top_k": 50,
-            "top_p": 1,
-            "repetition_penalty": 1.5,
+            "max_new_tokens": 15,
+            "temperature": 1.5,
+            "top_k": 40,
+            #"top_p": 1.0,
+            "repetition_penalty": 1.25,
             "stop_sequences": ["\n"],
         }
 

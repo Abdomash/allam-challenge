@@ -14,7 +14,7 @@ def load_env(file_path):
                 key, value = line.split('=', 1)
                 os.environ[key] = value
 
-load_env(".env");
+load_env(".env")
 
 # Initialize logical units
 def infer_wazn(prompt):
@@ -24,7 +24,7 @@ def infer_qafiya(prompt):
     return None
 
 def infer_length(prompt):
-    return 6
+    return 2
 
 def generate_qasida(prompt, shatr_generator, wazn=None, qafiya=None, length=None, poet=None):
     wazn = wazn or infer_wazn(prompt)
@@ -34,7 +34,11 @@ def generate_qasida(prompt, shatr_generator, wazn=None, qafiya=None, length=None
     
     shatrs = []
     for _ in range(length):
-        shatr = shatr_generator.generate_shatr(prompt, wazn, qafiya, shatrs)
+        shatr, w, q = shatr_generator.generate_shatr(prompt, wazn, qafiya, shatrs)
+        if wazn is None:
+            wazn = w
+        if qafiya is None:
+            qafiya = q
         shatrs.append(shatr.strip())
     
     return shatrs
@@ -42,11 +46,12 @@ def generate_qasida(prompt, shatr_generator, wazn=None, qafiya=None, length=None
 if __name__ == "__main__":
     api_key = os.environ.get("API_KEY")
     llm = ALLAM_GENERATOR(api_key)
-    llm = FakeGenerator()
-    shatr_generator = ShatrGenerator(llm)
+    rag = RAG(poet="عنترة بن شداد")
+    #llm = FakeGenerator()
+    shatr_generator = ShatrGenerator(llm, rag=rag)
     while True:
         prompt = input("Enter a prompt: ")
         if not prompt or prompt == "exit":
             break
-        qasida = generate_qasida(prompt, shatr_generator)
+        qasida = generate_qasida(prompt, shatr_generator, length=2, wazn="الكامل", qafiya="ن")
         print(qasida)
