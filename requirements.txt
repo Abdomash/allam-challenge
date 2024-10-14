@@ -6,8 +6,14 @@ flask-session
 diacritization-evaluation==0.5
 tqdm==4.56.0
 pyarabic
-keras==2.12
-tensorflow==2.12
+keras==2.10
+tensorflow==2.10
 termcolor
 ipython
 scikit-learn
+datasets
+sentence_transformers
+tkseem
+gdown
+ruamel.yaml
+matplotlib

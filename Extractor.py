@@ -4,6 +4,7 @@ class Extractor:
     def __init__(self):
         sys.path.append("qawafi/qawafi_server/Arabic_Diacritization") #lib should be ...../Arabi
         sys.path.append("qawafi/qawafi_server")
+        sys.path.append("qawafi/qawafi_server/Bohour")
         from qawafi_server.bait_analysis import BaitAnalysis
         self.analyzer = BaitAnalysis("qawafi/qawafi_server/Arabic_Diacritization/config/test.yml")
 
