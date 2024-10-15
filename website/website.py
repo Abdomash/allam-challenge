@@ -1,20 +1,32 @@
-from ShatrGenerator import ShatrGenerator
+import sys
+import os
+import json
+from time import sleep
+
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_session import Session
 
+# Add reference to parent directory
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(parent_dir)
+
 from LLMInterface import FakeGenerator
+from ShatrGenerator import ShatrGenerator
+from RAG import RAG
+from Analyzer import Analyzer
 from main import generate_qasida
 
-from time import sleep
-import json
-
+# Initialize The Flask App
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SESSION_TYPE'] = 'filesystem'  # Use server-side session
 Session(app)
 
+# Initialize heavy components
+rag = RAG()
+analyzer = Analyzer()
 llm = FakeGenerator()
-shatr_generator = ShatrGenerator(llm)
+shatr_generator = ShatrGenerator(llm, rag=rag, analyzer=analyzer)
 
 def load_poets():
     POETS_FILEPATH = 'poets.json'
@@ -27,11 +39,11 @@ BAHRS = ['الكامل', 'الوافر', 'الطويل', 'البسيط' ]
 POETS = load_poets() 
 
 def process_prompt(prompt, selected_bahr, selected_poet):
-    sleep(3)
     if selected_poet == 'None':
         selected_poet = None
     if selected_bahr == 'None':
         selected_bahr = None
+
     qasida = generate_qasida(prompt, shatr_generator, wazn=selected_bahr, poet=selected_poet)
     return qasida
 
@@ -53,11 +65,6 @@ def chat():
 
 @app.route('/clear', methods=['POST'])
 def clear_chat():
-    global llm
-    global shatr_generator
-    llm = FakeGenerator()
-    shatr_generator = ShatrGenerator(llm)
-    
     session.pop('chat_log', None)  # Remove the chat log from session
     return redirect(url_for('chat'))
 
