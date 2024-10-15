@@ -4,28 +4,28 @@
     --primary-color: rgba(234, 182, 118, 0.8);
     --secondary-color: rgba(183, 203, 235, 1);
     --accent-color: rgba(129, 167, 227, 1);
-    --background-color: rgba(255, 255, 255, 0.5);
+    --background-color: rgba(255, 255, 255, 1);
     --text-color: rgba(50, 50, 50, 1);
     --text-muted: rgba(100, 100, 100, 1);
     /* --button-color: var(--accent-color); */
     --button-color: var(--accent-color);
     --button-hover-color: var(--secondary-color);
 
-    --button-danger-color: rgba(250, 84, 72, 1);
-    --button-danger-hover-color: rgba(252, 132, 124, 0.6);
+    --button-danger-color: rgba(255, 102, 94, 1);
+    --button-danger-hover-color: rgba(255, 144, 138, 0.6);
 
     /* Background image by Freepik */
     --background-image: url('https://images.unsplash.com/photo-1711107759674-9161698e570d?q=80&w=1932');
 
     /* Global Font settings */
     --font-family: 'Amiri', serif;
-    --line-height: 1.9;
+    --line-height: 1.5;
 }
 
 * {
     font-family: var(--font-family);
     font-variation-settings: 'wght' 400;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: var(--text-color);
 }
 
@@ -38,10 +38,12 @@
 }
 
 body {
+    overflow: auto;
     line-height: var(--line-height);
     background-image: var(--background-image);
-    /* background-color: var(--background-color); */
     background-size: cover;
+    background: rgb(173, 165, 146);
+    background: linear-gradient(90deg, rgba(173, 165, 146, 1) 0%, rgba(245, 225, 183, 1) 16%, rgba(246, 234, 208, 1) 50%, rgba(245, 225, 183, 1) 90%, rgba(173, 165, 146, 1) 100%);
     margin: 0;
     padding: 0;
     display: flex;
@@ -51,67 +53,64 @@ body {
 }
 
 h1 {
-    font-size: 2em;
-    margin-top: 20px;
+    font-size: 1.5em;
     text-align: center;
 }
 
+h2 {
+    text-align: right;
+}
+
 .chat-box {
-    width: 80%;
-    max-width: 1200px;
-    background-color: var(--background-color);
+    max-width: fit-content;
+    width: 50%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: right;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+    gap: 20px;
 }
 
 .chat-log {
-    max-height: 1000px;
-    overflow-y: auto;
+    width: 100%;
     display: flex;
-    flex-direction: column-reverse;
-    /* Newest messages appear at the top */
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 5px;
+    flex-direction: column;
+    gap: 30px;
 }
 
+
 .chat-entry {
-    margin-bottom: 10px;
+    width: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.user-prompt {
-    width: fit-content;
+.user-prompt,
+.llm-response {
     padding: 10px 20px;
-    align-self: flex-start;
     font-weight: bold;
     color: var(--text-color);
-    background-color: var(--secondary-color);
-    max-width: 70%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
+}
+
+.user-prompt {
     word-wrap: break-word;
+    max-width: 50%;
+    align-self: flex-start;
+    background-color: var(--secondary-color);
     margin-right: 30px;
 }
 
 .llm-response {
-    padding: 10px 20px;
-    width: fit-content;
-    height: fit-content;
+    max-width: 70%;
     align-self: flex-end;
-    font-weight: bold;
-    color: var(--text-color);
     background-color: var(--primary-color);
-    border-radius: 10px;
-    display: grid;
-    max-width: 80%;
     margin-left: 30px;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 40px;
-    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 @media (max-width: 600px) {
@@ -122,19 +121,24 @@ h1 {
     * {
         font-size: 1em;
     }
+
+    .bottom-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    input[type="text"],
+    .send-button,
+    .clear-button {
+        margin-top: 10px;
+    }
 }
 
 .grid-item {
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.grid-item:nth-child(odd) {
-    text-align: right;
-}
-
-.grid-item:nth-child(even) {
-    text-align: left;
+    flex: 1 1 40%;
+    margin: 10px;
+    white-space: nowrap;
+    text-align: center;
 }
 
 .appear-animation {
@@ -150,35 +154,64 @@ h1 {
     }
 }
 
+.chat-form-container {
+    max-width: 90%;
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    border-top: 1px solid #ccc;
+    background-color: var(--background-color);
+    border-radius: 10px;
+    gap: 10px;
+    padding: 10px 40px;
+    bottom: 0px;
+}
+
+.chat-form-container * {
+    font-size: 1em;
+}
+
+.chat-form {
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+label {
+    display: inline-block;
+    margin-right: 10px;
+}
+
 input[type="text"] {
     /* font-size: 1em; */
-    width: 80%;
-    max-width: 800px;
-    padding: 20px;
-    margin-left: 20px;
     border-radius: 10px;
+    background-color: var(--background-color);
     border: 1px solid #ccc;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
+    padding: 10px;
+    overflow: wrap;
 }
 
 .muted {
     font-size: 0.8em;
-    margin: 0 30px;
     /* font-size: 0.8em; */
     color: var(--text-muted);
 }
 
 select {
-    width: 80%;
-    max-width: 800px;
-    padding: 15px;
     border-radius: 10px;
     border: 1px solid #ccc;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
+    background-color: var(--background-color);
     /* font-size: 1em; */
     direction: rtl;
+    padding: 5px 15px;
 }
 
 .send-button,
@@ -188,11 +221,9 @@ select {
     justify-content: space-between;
     gap: 15px;
     /* font-size: 1em; */
-    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
 }
 
 .send-button {
@@ -213,6 +244,9 @@ select {
 }
 
 .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 20px;
 }
 
@@ -220,8 +254,8 @@ select {
     border: 8px solid var(--background-color);
     border-top: 8px solid var(--primary-color);
     border-radius: 50%;
-    width: 60px;
-    height: 60px;
+    width: 30px;
+    height: 30px;
     animation: spin 2s linear infinite;
 }
 

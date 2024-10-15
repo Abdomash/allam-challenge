@@ -22,8 +22,11 @@
 <body>
   <h1>تحدث مع الشاعر علّام</h1>
   <div class="chat-box">
-    تاريخ الدردشة:
-    <div class="chat-log">
+      <h2>تاريخ الدردشة</h2>
+    <div class="chat-log" id="chat-log">
+      <div class="loading" id="loading" style="display: none;">
+        <span class="spinner material-icons md-48"></span>
+      </div>
       {% for entry in chat_log %}
       <div class="chat-entry">
         <p class="user-prompt">
@@ -49,31 +52,28 @@
       </div>
       {% endfor %}
     </div>
-    <form method="POST" id="chat-form" onsubmit="showSpinner();">
-      <div class="loading" id="loading" style="display: none;">
-        <span class="spinner material-icons md-48"></span>
-      </div>
+  </div>
+  <div class="chat-form-container">
+    <form method="POST" id="chat-form" onsubmit="showSpinner();" class="chat-form">
+      <label for="prompt"><h2>ادخل طلبك هنا:</h2></label>
+      <input type="text" name="prompt" placeholder="عطني شعر عن الوطن..." required></input>
+      
 
-      <label for="prompt">ادخل طلبك هنا:</label><br />
-      <input type="text" name="prompt" placeholder="عطني شعر عن الوطن..." required></input><br />
-      <br />
-
-      <label for="bahr">اختر البحر: <span class="muted">(اختياري)</span></label><br />
+      <label for="bahr"><h2>اختر البحر:</h2></label>
       <select name="bahr" id="bahr" type="radio">
         <option value="None">--</option>
         {% for bahr in bahrs %}
         <option value="{{ bahr }}">{{ bahr }}</option>
         {% endfor %}
-      </select><br />
-      <br />
+      </select>
 
-      <label for="poet">اختر الشاعر:<span class="muted">(مطلوب)</span></label><br />
+      <label for="poet"><h2>اختر الشاعر:</h2></label>
       <select name="poet" id="poet" type="radio">
         {% for poet in poets %}
         <option value="{{ poet }}">{{ poet }}</option>
         {% endfor %}
-      </select><br />
-      <br />
+      </select>
+      
       <div class="align-button">
         <button type="submit" value="إرسال" class="send-button">
           <span class="material-icons md-48">
@@ -83,7 +83,7 @@
         </button>
       </div>
     </form>
-    <form method="POST" action="/clear" onsubmit="showSpinner();">
+    <form method="POST" action="/clear" onsubmit="showSpinner();" class="chat-form">
       <div class="align-button">
         <button type="submit" value="مسح المحادثة" class="clear-button">
           <span class="material-icons md-48">
