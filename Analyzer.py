@@ -92,6 +92,7 @@ class Analyzer:
             if without_dia[-1] in [ "و" ,  "ي"]:
                 qafiya = without_dia[-3:-1] if without_dia[-2] in ["ه"] else without_dia[-2]
                 #edge case: letter-ha-vowel -> letter-ha is the qafiya
+                #else: letter-vowel becomes letter (TODO lookup)
             else:
                 if without_dia[-1] == "ن": #tanween edge case
                     qafiya = without_dia[-2:] #letter-n
@@ -106,17 +107,18 @@ class Analyzer:
 if __name__ == "__main__":
     e = Analyzer()
 
-    print(e.extract("أَلا رُبَّ يَوْمٍ لَكَ مِنْهُنَّ صَالِحٍ"))
-    print(e.extract("أَلا رُبَّ يَوْمٍ لَكَ مِنْهُنَّ صَالِحٍ", "الطويل")) #wrong classification: test!
+    #Test cases
+    print(e.extract("أَلا رُبَّ يَوْمٍ لَكَ مِنْهُنَّ صَالِحٍ")) #misclassified as nathri test
+    print(e.extract("أَلا رُبَّ يَوْمٍ لَكَ مِنْهُنَّ صَالِحٍ", "الطويل")) #force attempt on specific bahr
 
-    print(e.extract("واحرَّ قَلباهُ مِمَّن قَلبُهُ شَبِمُ"))
+    print(e.extract("واحرَّ قَلباهُ مِمَّن قَلبُهُ شَبِمُ")) #baseet, no wrong, mim qafiyah
 
-    print(e.extract("القلب أعلم يا عذول بدائه"))
+    print(e.extract("القلب أعلم يا عذول بدائه")) #kamel, hamza (IGNORE EDGE CASE)
 
-    print(e.extract("القلب في متنكّرٍ يا أعلمَهْ"))
+    print(e.extract("القلب في متنكّرٍ يا أعلمَهْ")) #kamel, letter-ha edge case qafiyah
 
-    print(e.extract("أخي أنت حرٌّ وَراءَ السدود"))
+    print(e.extract("أخي أنت حرٌّ وَراءَ السدود")) #dal, mutaqarib (I think ne need for waw?)
 
-    print(e.extract("في بحور الغي والإثم غريقا"))
+    print(e.extract("في بحور الغي والإثم غريقا")) #ramal, letter-alif edge case
 
-    print(e.extract("والروح تبكي لوعة وفراق "))
+    print(e.extract("والروح تبكي لوعة وفراق ")) #kamel, qaf

@@ -145,19 +145,3 @@ class ALLAM_CRITIC(LLM_INTERFACE_CRITIC):
         data = response.json()
         return data['results'][0]['generated_text']
 
-    def build_critique_prompt(self, shatr, previous_shatrs=None):
-        prompt = ""
-
-        if previous_shatrs is not None:
-            prompt += "اليك هذه القصيدة:\n"        
-            prompt += " ".join(str(x) for x in previous_shatrs)
-            prompt += f" {shatr}\n" 
-
-        prompt += "ما رأيك في اخر شطر من هذه القصيدة؟"
-        prompt += "الشطر المقصود هو: "
-        prompt += f"{shatr}\n"
-        prompt += "استخرج ٣ نقاط عن البيت اللتي يمكننا تطويرها."
-        prompt += "اكتب النقاط بشكل مختصر وواضح." 
-
-        return prompt
-

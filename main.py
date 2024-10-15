@@ -2,7 +2,7 @@ import os
 import random
 from LLMInterface import ALLAM_GENERATOR, FakeGenerator
 from ShatrGenerator import ShatrGenerator
-from RAG import RAG
+from Prompter import Prompter
 
 def load_env(file_path):
     """Load environment variables from a .env file."""
@@ -45,10 +45,10 @@ def generate_qasida(prompt, shatr_generator, wazn=None, qafiya=None, length=None
 
 if __name__ == "__main__":
     api_key = os.environ.get("API_KEY")
-    llm = ALLAM_GENERATOR(api_key)
-    rag = RAG(poet="عنترة بن شداد")
-    #llm = FakeGenerator()
-    shatr_generator = ShatrGenerator(llm, rag=rag)
+    #llm = ALLAM_GENERATOR(api_key)
+    rag = Prompter(poet="عنترة بن شداد")
+    llm = FakeGenerator()
+    shatr_generator = ShatrGenerator(llm, prompter=rag)
     while True:
         prompt = input("Enter a prompt: ")
         if not prompt or prompt == "exit":
