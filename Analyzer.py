@@ -1,6 +1,9 @@
 import sys
+
 sys.path.append("qawafi/qawafi_server/Arabic_Diacritization") #lib should be ...../Arabi
 sys.path.append("qawafi/qawafi_server")
+sys.path.append("qawafi/qawafi_server/Bohour")
+
 from qawafi_server.bait_analysis import BaitAnalysis
 from qawafi_server.utils import (
     BOHOUR_NAMES,
@@ -14,9 +17,12 @@ from qawafi_server.utils import (
 
 BOHOURS_USED = ["kamel", "baseet", "taweel", "wafer", "ramal", "rajaz", "mutakareb", "mujtath"]
 
+# Load the model once to avoid reloading it every time
+analysis_model = BaitAnalysis("qawafi/qawafi_server/Arabic_Diacritization/config/test.yml")
+
 class Analyzer:
     def __init__(self):
-        self.analyzer = BaitAnalysis("qawafi/qawafi_server/Arabic_Diacritization/config/test.yml")
+        self.analyzer = analysis_model
 
     def get_first_mistake(self, wazn_GR):
         #check error in the arood writing (R,G,B,Y)
