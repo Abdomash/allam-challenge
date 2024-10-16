@@ -67,7 +67,7 @@ class Prompter:
         if current_attempt:
             full_text += current_attempt
 
-        print(full_text)
+        #print(full_text)
         return full_text
     
     def update(self, qafiya):

@@ -23,6 +23,28 @@ analysis_model = BaitAnalysis("qawafi/qawafi_server/Arabic_Diacritization/config
 class Analyzer:
     def __init__(self):
         self.analyzer = analysis_model
+    
+    def get_first_mistake2(self, comb, ideal, ret_inf=False):
+        no_error = len(comb) if ret_inf else -1
+        too_little = len(comb) if ret_inf else -2
+        if len(comb) >= len(ideal)+3: #ignore deleting 1 (110 -> 10), or adding 10
+            return len(ideal) #mistake is in too big of a length
+        if len(comb) <= len(ideal)-4: #too short, even after deleting (1110110 -> 1110)
+            return too_little #special meaning too little gen!
+        max_match_len = no_error
+        for i in range(len(ideal)):
+            if comb.find(ideal[:i]) in [0,1]: #first or second indexes only, ignore mistakes (khazm)
+                max_match_len = i
+            else:
+                break #we didnt find this size
+        
+        #things to look for:
+        #1010 actual, 110 ideal, error in -3
+        #1110 actual, 1010 ideal, error in -3
+        if max_match_len >= len(comb)-3: #if max_match is in last or before last ok!
+            return no_error
+        else:
+            return max_match_len
 
     def get_first_mistake(self, wazn_GR):
         #check error in the arood writing (R,G,B,Y)
@@ -30,7 +52,7 @@ class Analyzer:
         errors = [wazn_GR.find("R"), wazn_GR.find("B"), wazn_GR.find("Y")]
         #errors = [wazn_GR.find("B"), wazn_GR.find("Y")]
 
-        ok_range = [-1, 0, 1, len(wazn_GR)-1, len(wazn_GR)-2, len(wazn_GR)-3, len(wazn_GR)-4]
+        ok_range = [-1, 0, 1, len(wazn_GR)-1, len(wazn_GR)-2, len(wazn_GR)-3, len(wazn_GR)-4, ]
         #TODO: remove 0 and 1
 
         if max(errors) in ok_range:
@@ -43,7 +65,6 @@ class Analyzer:
     #comb = 1001001010101010
     #returns closest combs and bahr to the shatr provided
     def get_closest_bahr(self, shatr_comb, check_prefix=False, expected_bahr=None): #check_prefix = ensure similarity at beginning
-        if check_prefix:
             use_bahrs = [BOHOUR_NAMES[BOHOUR_NAMES_AR.index(expected_bahr)]] if expected_bahr is not None else BOHOURS_USED
             #if the poem expects a certain bahr then use it!
             out = []
@@ -55,21 +76,18 @@ class Analyzer:
                     self.analyzer.BOHOUR_PATTERNS[meter],
                     self.analyzer.BOHOUR_TAFEELAT[meter],
                 ):
-                    max_match_len = -1
-                    for i in range(len(comb)):
-                        if shatr_comb.find(comb[:i]) in [0,1]: #first or second indexes only
-                            max_match_len = i
-                        else:
-                            break #we didnt find this size
+                    #first_mistake = 
                     #prob = self.analyzer.similarity_score(tf3, comb)
                     ar_meter = BOHOUR_NAMES_AR[BOHOUR_NAMES.index(meter)]
+                    if check_prefix:
+                        max_match_len = self.get_first_mistake2(shatr_comb, comb, True) #if no mistake, rank the match very high in sorting!
+                    else:
+                        max_match_len = self.analyzer.similarity_score(shatr_comb, comb)
                     out.append((comb, max_match_len, tafeelat, ar_meter))
             
             #return sorted(out, key=lambda x: x[1], reverse=True)
             closest = sorted(out, key=lambda x: x[1], reverse=True)[0]
             return closest #010101 comb, length of matching, tafeelat shape, meter name (arabic)
-        else:
-            pass
 
     def extract(self, shatr, expected_wazn_name=None): #returns qafiya type, wazn combs+name
         output = self.analyzer.analyze(shatrs=[shatr], short_qafiyah=True, override_tashkeel=True, predict_era=False, predict_closest=False, predict_theme=False)
@@ -78,14 +96,16 @@ class Analyzer:
         wazn_name = output["meter"]
         aroodi_writing = output["arudi_style"][-1][0]
         combs = output["arudi_style"][-1][1]
+        print(aroodi_writing)
 
-        if wazn_name == "نثر" or expected_wazn_name is not None: #get closest bahr, re-do mismatch finding
-            closest_comb, _, _, wazn_name = self.get_closest_bahr(combs, True, expected_wazn_name) #0101
-            wazn_mismatch = find_mismatch(closest_comb, combs, False)
-        else:
-            wazn_mismatch = output["patterns_mismatches"][-1] #edge case with nathr, need to have legit bahr else all letters are mistakes
+        closest_comb, _, _, wazn_name = self.get_closest_bahr(combs, True, expected_wazn_name) #0101
+        print("ACTUAL:  " +combs)
+        print("CLOSEST: "+closest_comb)
+        #wazn_mismatch = find_mismatch(closest_comb, combs, False)
+        wazn_mismatch = self.get_first_mistake2(combs, closest_comb)
 
         print(wazn_mismatch)
+
         #extract qafiyah from last 2 letters without diacritics
         diacritics = ['َ', 'ً', 'ُ', 'ٌ', 'ِ', 'ٍ', 'ْ', 'ّ']
         without_dia = aroodi_writing + ""

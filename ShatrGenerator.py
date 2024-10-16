@@ -1,8 +1,5 @@
 from Analyzer import Analyzer
-from FeedbackGenerator import FeedbackGenerator
-from QafiyaValidator import QafiyaValidator
 from Prompter import Prompter
-from WaznValidator import WaznValidator
 
 class ShatrGenerator:
     def __init__(self, llm, prompter=None, analyzer=None):
@@ -19,7 +16,7 @@ class ShatrGenerator:
             iters += 1
             # Generate a shatr
             shatr = new_shatr
-            shatr += self.llm.generate(self.prompter.wrap(prompt, previous_shatrs, feedback, shatr))
+            shatr += self.llm.generate(self.prompter.wrap_gen(prompt, previous_shatrs, feedback, shatr))
             print("----------------------")
             print(f"attempt {iters}: {shatr}")
             # Extract Wazn and Qafiya
@@ -29,11 +26,11 @@ class ShatrGenerator:
                 wazn = new_wazn_name
             
             # Validate Wazn
-            first_mistake_idx = self.analyzer.get_first_mistake(new_wazn_mismatch)
-            if first_mistake_idx > -1: # Mistake found
+            #first_mistake_idx = self.analyzer.get_first_mistake(new_wazn_mismatch)
+            if new_wazn_mismatch > -1: # Mistake found
                 #feedback = self.feedback_generator.generate_feedback("wazn", new_wazn_name, wazn, shatr)
                 #print(feedback)
-                new_shatr = self.cut_to_last_valid_word(diacritized, first_mistake_idx)
+                new_shatr = self.cut_to_last_valid_word(diacritized, new_wazn_mismatch*2) #harakat means length of diacritized is double!
                 print(f"cut shatr: {new_shatr}")
                 continue # Loop back to regenerate
 

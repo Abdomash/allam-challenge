@@ -33,11 +33,11 @@ def generate_qasida(prompt, shatr_generator, wazn=None, qafiya=None, length=None
     poet = poet or None
     
     shatrs = []
-    for _ in range(length):
+    for i in range(length):
         shatr, w, q = shatr_generator.generate_shatr(prompt, wazn, qafiya, shatrs)
         if wazn is None:
             wazn = w
-        if qafiya is None:
+        if qafiya is None and i > 0:
             qafiya = q
         shatrs.append(shatr.strip())
     
@@ -53,5 +53,5 @@ if __name__ == "__main__":
         prompt = input("Enter a prompt: ")
         if not prompt or prompt == "exit":
             break
-        qasida = generate_qasida(prompt, shatr_generator, length=2, wazn="الكامل", qafiya="ن")
+        qasida = generate_qasida(prompt, shatr_generator, length=2)
         print(qasida)

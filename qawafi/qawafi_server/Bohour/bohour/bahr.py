@@ -50,7 +50,6 @@ from bohour.zehaf import (
     KhabalAndKasf,
 )
 
-
 class Bahr:
     tafeelat = tuple()
     arod_dharbs_map = dict()

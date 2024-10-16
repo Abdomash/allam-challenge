@@ -12,7 +12,7 @@ sys.path.append(parent_dir)
 
 from LLMInterface import FakeGenerator
 from ShatrGenerator import ShatrGenerator
-from RAG import RAG
+from Prompter import Prompter
 from Analyzer import Analyzer
 from main import generate_qasida
 
@@ -23,10 +23,10 @@ app.config['SESSION_TYPE'] = 'filesystem'  # Use server-side session
 Session(app)
 
 # Initialize heavy components
-rag = RAG()
+rag = Prompter()
 analyzer = Analyzer()
 llm = FakeGenerator()
-shatr_generator = ShatrGenerator(llm, rag=rag, analyzer=analyzer)
+shatr_generator = ShatrGenerator(llm, prompter=rag, analyzer=analyzer)
 
 def load_poets():
     POETS_FILEPATH = 'poets.json'

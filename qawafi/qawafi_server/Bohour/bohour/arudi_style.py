@@ -155,7 +155,7 @@ def extract_tf3eelav3(pred, verbose=False):
                     # plain_chars += char
                 i -= 1
             if next_next_char == " ":
-                if char == "ه":
+                if char == "ه" and prev_char != "0": #Fixed edge case with vowel-ha, dont add another vowel
                     if next_char == harakat[0]:
                         plain_chars += "ي"
                         out += "0"
