@@ -87,7 +87,9 @@ def valid_arabic_cleaners(text):
         continue
 
       # remove second tanween and sukun
-      if i > 1 and text[i] in tnween_chars+sukun and  text[i-2] in tnween_chars+sukun:
+      #FIXED: text[i] in sukun+tanween -> text[i] in sukun
+      #bug in word "harbun" (ha-fatha, r,sukun, ba,tanwen)
+      if i > 1 and text[i] in sukun and  text[i-2] in tnween_chars+sukun:
         i += 1
         continue 
       
