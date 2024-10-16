@@ -58,7 +58,7 @@ def handle_space(plain_chars):
         return plain_chars[:-1]
 
 
-def remove_extra_harakat(pred):
+def remove_extra_harakat(pred): #WRONG, fixed
     out = ""
     i = 0
     while i < len(pred):
@@ -158,15 +158,18 @@ def extract_tf3eelav3(pred, verbose=False, return_indices=False):
                     out += "0"
                     indices.append(i)
                     plain_chars += char
-                elif prev_char == "0" and chars[i + 1] == " ":
+                #removed prev_char == "0" from elif 
+                elif chars[i + 1] in [" ", "ا", "و", "ي"] and (i+2 < len(chars)) and (i+4 > len(chars) or chars[i+1:i+4] != " ال"): #changed: allowed letter-vowel to be represented as 10, no need for harakat too
                     out += "1"
                     indices.append(i)
                     plain_chars += char
                 else:
                     plain_chars = handle_space(plain_chars) + char
-                    # plain_chars += char
+                    #plain_chars += char
                 i -= 1
             if next_next_char == " ":
+                #IGNORED mim to the edge case (adding vowel in hashw)
+                #mim edge case only applies in jam3 (kaf mim, hah mim)
                 if char == "ه" and prev_char != "0": #Fixed edge case with vowel-ha, dont add another vowel
                     if next_char == harakat[0]:
                         plain_chars += "ي"
@@ -220,8 +223,17 @@ def process_specials_before(bait):
     bait = bait.replace("إلَى", "إِلَى")
     bait = bait.replace("إذَا", "إِذَا")
     bait = bait.replace("ك ", "كَ ")
-    bait = bait.replace(" ال ", " الْ ")
-    bait = bait.replace("ْ ال", "ِ ال")
+    #added al, vowel-alif combs
+    bait = bait.replace("ْ ال", "ِ لْ")
+    bait = bait.replace("ُ ال", "ِ لْ")
+    bait = bait.replace("ِ ال", "ِ لْ")
+    bait = bait.replace("َ ال", "ِ لْ")
+    bait = bait.replace(" ال", " الْ")
+    bait = bait.replace("لا", "لَا")
+    bait = bait.replace("َاَ", "َا")
+    bait = bait.replace("ْْ", "ْ") #added, to help fix al t3rif problem
+    bait = bait.replace("ّْ", "ّ")
+    print(bait)
 
     out = []
     for word in bait.split(" "):
@@ -238,7 +250,7 @@ def process_specials_before(bait):
 
     if bait[1] in all_chars:
         bait = bait[0] + harakat[1] + bait[1:]
-    out = []
+    out = ""
     i = 0
     while i < len(bait):
         if bait[i] == "ا" and bait[i - 1] in tnween_chars:
