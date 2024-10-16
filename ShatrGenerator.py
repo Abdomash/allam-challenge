@@ -20,7 +20,7 @@ class ShatrGenerator:
             print("----------------------")
             print(f"attempt {iters}: {shatr}")
             # Extract Wazn and Qafiya
-            new_qafiya, new_wazn_name, new_wazn_combs, new_wazn_mismatch, diacritized = self.analyzer.extract(shatr, expected_wazn_name=wazn)
+            new_qafiya, new_wazn_name, new_wazn_combs, new_wazn_mismatch, diacritized, arudi_indices = self.analyzer.extract(shatr, expected_wazn_name=wazn)
 
             if wazn is None:
                 wazn = new_wazn_name
@@ -30,7 +30,8 @@ class ShatrGenerator:
             if new_wazn_mismatch > -1: # Mistake found
                 #feedback = self.feedback_generator.generate_feedback("wazn", new_wazn_name, wazn, shatr)
                 #print(feedback)
-                new_shatr = self.cut_to_last_valid_word(diacritized, new_wazn_mismatch*2) #harakat means length of diacritized is double!
+                index_to_delete = arudi_indices[new_wazn_mismatch]
+                new_shatr = self.cut_to_last_valid_word(diacritized, index_to_delete) #harakat means length of diacritized is double!
                 print(f"cut shatr: {new_shatr}")
                 continue # Loop back to regenerate
 

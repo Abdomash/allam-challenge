@@ -25,12 +25,8 @@ class Analyzer:
         self.analyzer = analysis_model
     
     def get_first_mistake2(self, comb, ideal, ret_inf=False):
-        no_error = len(comb) if ret_inf else -1
-        too_little = len(comb) if ret_inf else -2
-        if len(comb) >= len(ideal)+3: #ignore deleting 1 (110 -> 10), or adding 10
-            return len(ideal) #mistake is in too big of a length
-        if len(comb) <= len(ideal)-4: #too short, even after deleting (1110110 -> 1110)
-            return too_little #special meaning too little gen!
+        no_error = 9999 if ret_inf else -1
+        too_little = len(comb)-1 if ret_inf else -2
         max_match_len = no_error
         for i in range(len(ideal)):
             if comb.find(ideal[:i]) in [0,1]: #first or second indexes only, ignore mistakes (khazm)
@@ -41,7 +37,11 @@ class Analyzer:
         #things to look for:
         #1010 actual, 110 ideal, error in -3
         #1110 actual, 1010 ideal, error in -3
-        if max_match_len >= len(comb)-3: #if max_match is in last or before last ok!
+        if max_match_len >= len(comb)-3: #if max_match is in last or before last ok! (check total length tho)
+            if len(comb) > len(ideal)+1: #ignore deleting 1 (110 -> 10), or adding 10
+                return len(ideal) #mistake is in too big of a length
+            if len(comb) < len(ideal): #too short, even after deleting (1110110 -> 1110)
+                return too_little #special meaning too little gen!
             return no_error
         else:
             return max_match_len
@@ -98,9 +98,12 @@ class Analyzer:
         combs = output["arudi_style"][-1][1]
         print(aroodi_writing)
 
+        aroodi_indices = output["arudi_indices"][-1]
+
         closest_comb, _, _, wazn_name = self.get_closest_bahr(combs, True, expected_wazn_name) #0101
         print("ACTUAL:  " +combs)
         print("CLOSEST: "+closest_comb)
+        print("indices: "+str(output["arudi_indices"][-1]))
         #wazn_mismatch = find_mismatch(closest_comb, combs, False)
         wazn_mismatch = self.get_first_mistake2(combs, closest_comb)
 
@@ -127,7 +130,7 @@ class Analyzer:
         #TODO: hamza ignore for now. can be done later
         #edge case with hamza+waw, hamza+alif maqsoora, ..
         #also needs RAG updating
-        return qafiya, wazn_name, combs, wazn_mismatch, output["diacritized"][-1]
+        return qafiya, wazn_name, combs, wazn_mismatch, output["diacritized"][-1], aroodi_indices
 
 
 if __name__ == "__main__":

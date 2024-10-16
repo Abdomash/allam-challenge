@@ -71,7 +71,8 @@ def remove_extra_harakat(pred):
     return out
 
 
-def extract_tf3eelav3(pred, verbose=False):
+def extract_tf3eelav3(pred, verbose=False, return_indices=False):
+    indices = []
     pred = remove_extra_harakat(pred)
     chars = list(pred.replace("\u0622", "ءَا").strip())
     chars = [c for c in chars if c in prem_chars]
@@ -105,13 +106,16 @@ def extract_tf3eelav3(pred, verbose=False):
             # ----------------------
             if next_char in harakat:
                 out += "1"
+                indices.append(i)
                 plain_chars += char
             elif next_char in sukun:
                 if prev_char != "0":
                     out += "0"
+                    indices.append(i)
                     plain_chars += char
                 elif (i + 1) == len(chars) - 1:
-                    out = out[:-1] + "10"
+                    out = out[:-1] + "10" #replace sukun (0) with 10 to avoid 100
+                    indices.append(i) #adding 1 only
                     plain_chars += char
                 else:
                     plain_chars = handle_space(plain_chars) + char
@@ -120,6 +124,8 @@ def extract_tf3eelav3(pred, verbose=False):
                     plain_chars += char
                 plain_chars += "ن"
                 out += "10"
+                indices.append(i)
+                indices.append(i) #add twice
             elif next_char in shadda_chars:
                 """added characters"""
                 # 1
@@ -127,9 +133,12 @@ def extract_tf3eelav3(pred, verbose=False):
                     plain_chars += char
                     plain_chars += char
                     out += "01"
+                    indices.append(i)
+                    indices.append(i)
                 else:
                     plain_chars = handle_space(plain_chars) + char + char
                     out += "1"
+                    indices.append(i)
                 if i + 2 < len(chars):  # need to recheck this
                     if (
                         chars[i + 2] in harakat
@@ -143,12 +152,15 @@ def extract_tf3eelav3(pred, verbose=False):
                         plain_chars += "ن"
                         # out += '10'
                         out += "0"
+                        indices.append(i)
             elif next_char in all_chars:
                 if prev_char != "0":
                     out += "0"
+                    indices.append(i)
                     plain_chars += char
                 elif prev_char == "0" and chars[i + 1] == " ":
                     out += "1"
+                    indices.append(i)
                     plain_chars += char
                 else:
                     plain_chars = handle_space(plain_chars) + char
@@ -159,9 +171,11 @@ def extract_tf3eelav3(pred, verbose=False):
                     if next_char == harakat[0]:
                         plain_chars += "ي"
                         out += "0"
+                        indices.append(i)
                     if next_char == harakat[2]:
                         plain_chars += "و"
                         out += "0"
+                        indices.append(i)
             i += 2
         if j > 2 * len(chars):
             print(out, plain_chars)
@@ -170,6 +184,7 @@ def extract_tf3eelav3(pred, verbose=False):
 
     if out[-1] != "0":
         out += "0"  # always add sukun to the end of baits if mutaharek
+        indices.append(i)
     if chars[-1] == harakat[0]:
         plain_chars += "ي"
     elif chars[-1] == tnween_chars[1]:
@@ -183,6 +198,8 @@ def extract_tf3eelav3(pred, verbose=False):
     elif chars[-1] in "ىاوي" and chars[-2] not in tnween_chars:
         plain_chars += chars[-1]
     plain_chars_no_space = plain_chars.replace(" ", "")
+    if return_indices:
+        return plain_chars, out, indices
     return plain_chars, out
 
 
@@ -246,11 +263,12 @@ def process_specials_after(bait):
 
 def get_arudi_style(bait, verbose=False):
     results = []
+    indices = []
     bait = bait.strip()
     if len(bait) > 0:
         preprocessed = process_specials_before(bait)
-        arudi_style, pattern = extract_tf3eelav3(preprocessed, verbose=verbose)
-        results.append([process_specials_after(arudi_style), pattern])
+        arudi_style, pattern, indices = extract_tf3eelav3(preprocessed, verbose=verbose, return_indices=True)
+        results.append([process_specials_after(arudi_style), pattern, indices])
     else:
         results.append(["", ""])
     return results

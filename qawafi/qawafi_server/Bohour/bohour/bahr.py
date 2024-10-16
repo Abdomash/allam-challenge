@@ -1,54 +1,8 @@
 import itertools
 
 
-from bohour.tafeela import (
-    Fae_laton,
-    Faelaton,
-    Faelon,
-    Fawlon,
-    Mafaeelon,
-    Mafaelaton,
-    Mafoolato,
-    Mustafe_lon,
-    Mustafelon,
-    Mutafaelon,
-    Tafeela,
-)
-from bohour.zehaf import (
-    Asab,
-    Batr,
-    Edmaar,
-    Hadhf,
-    HadhfAndKhaban,
-    Hathath,
-    HathathAndEdmaar,
-    Kaff,
-    Kasf,
-    Khabal,
-    Khaban,
-    KhabanAndQataa,
-    NoZehafNorEllah,
-    Qabadh,
-    Qataa,
-    QataaAndEdmaar,
-    Qataf,
-    Salam,
-    Shakal,
-    Tarfeel,
-    TarfeelAndEdmaar,
-    TarfeelAndKhaban,
-    Tasbeegh,
-    Tasheeth,
-    Tatheel,
-    TatheelAndEdmaar,
-    Tay,
-    TayAndKasf,
-    Thalm,
-    Tharm,
-    Waqf,
-    WaqfAndTay,
-    KhabalAndKasf,
-)
+from bohour.tafeela import *
+from bohour.zehaf import *
 
 class Bahr:
     tafeelat = tuple()
@@ -239,8 +193,8 @@ class Taweel(Bahr):
     tafeelat = (Fawlon, Mafaeelon, Fawlon, Mafaeelon)
     arod_dharbs_map = {Qabadh: (Qabadh, Hadhf, NoZehafNorEllah)}
     disallowed_zehafs_for_hashw = {
-        0: ([], [], [Thalm, Tharm]),
-        1: ([Thalm, Tharm], [], [Thalm, Tharm]),
+        0: ([Thalm, Tharm], [Kaff], [Thalm, Tharm]), #added thalm,tharm, kaff to 1st shatr
+        1: ([Thalm, Tharm], [Kaff], [Thalm, Tharm]), #added kaff to mfa3elon
     }
 
 
@@ -299,8 +253,8 @@ class Baseet(Bahr):
     tafeelat = (Mustafelon, Faelon, Mustafelon, Faelon)
     arod_dharbs_map = {Khaban: (Khaban, Qataa)}
     disallowed_zehafs_for_hashw = {
-        0: ([], [Tasheeth], []),
-        1: ([], [Tasheeth], []),
+        0: ([Khabal], [Tasheeth], [Khabal]), #added Khabal
+        1: ([Khabal], [Tasheeth], [Khabal]), #added Khabal /-/-//- -> ////-
     }
     sub_bahrs = (BaseetMajzoo, BaseetMukhalla)
 
@@ -357,6 +311,11 @@ class Kamel(Bahr):
         ),
         Edmaar: (NoZehafNorEllah, Edmaar, Qataa, QataaAndEdmaar, HathathAndEdmaar),
         Hathath: (Hathath, HathathAndEdmaar),
+    }
+    #added
+    disallowed_zehafs_for_hashw = {
+        0: ([], [Waqas, Khazal]), #added all of this
+        1: ([], [Waqas, Khazal]) #only edmaar in second taf3ela
     }
     sub_bahrs = (KamelMajzoo,)
 

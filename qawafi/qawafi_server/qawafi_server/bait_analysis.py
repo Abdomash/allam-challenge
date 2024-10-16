@@ -223,6 +223,8 @@ class BaitAnalysis:
         diacritized_shatrs = []
         closest_baits = []
 
+        arudi_indices = []
+
 
         def do_shatr(shatr):
             nonlocal diacritized_shatrs
@@ -290,10 +292,10 @@ class BaitAnalysis:
 
         for i, diacritized_shatr in enumerate(diacritized_shatrs):
             if len(diacritized_shatr) > 0:
-                ((shatr_arudi_style, shatr_pattern),) = get_arudi_style(
+                ((shatr_arudi_style, shatr_pattern, shatr_indices),) = get_arudi_style(
                     diacritized_shatr
                 )
-                (closest_pattern, ratio, tafeelat) = self.check_similarity(
+                closest_pattern, ratio, tafeelat = self.check_similarity(
                     tf3=shatr_pattern,
                     bahr=meter,
                 )[0]
@@ -309,6 +311,8 @@ class BaitAnalysis:
                 )
                 patterns_mismatches.append(pattern_mismatch)
 
+                arudi_indices.append(shatr_indices)
+
         analysis = {
             "diacritized": diacritized_baits,
             "arudi_style": shatrs_arudi_styles_and_patterns,
@@ -319,5 +323,6 @@ class BaitAnalysis:
             "era": era,
             "closest_patterns": closest_patterns_from_shatrs,
             "theme": theme,
+            "arudi_indices":arudi_indices
         }
         return analysis
