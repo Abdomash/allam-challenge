@@ -76,7 +76,11 @@ class FakeGenerator(LLM_INTERFACE_GENERATOR):
             if not poet: 
                 # self.poet = self.poets[random.choice(list(self.poets.keys()))]
                 self.poet = self.poets["المتنبي"]
-            self.poems = self.poet['poems'][self.bohours[wazn]['name_en']]
+            try:
+                self.poems = self.poet['poems'][self.bohours[wazn]['name_en']]
+            except KeyError:
+                print(f"Poet {self.poet['name']} does not have any poems in {wazn}")
+                self.poems = random.choice(list(self.poet['poems'].values()))
         else:
             self.poems = random.choice(list(self.poet['poems'].values()))
 
