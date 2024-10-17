@@ -1,7 +1,6 @@
 import sys
 import os
 import json
-from time import sleep
 
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_session import Session
@@ -15,6 +14,7 @@ from ShatrGenerator import ShatrGenerator
 from Prompter import Prompter
 from Analyzer import Analyzer
 from main import generate_qasida
+from Data import load_poets, load_bohours
 
 # Initialize The Flask App
 app = Flask(__name__)
@@ -23,20 +23,13 @@ app.config['SESSION_TYPE'] = 'filesystem'  # Use server-side session
 Session(app)
 
 # Initialize heavy components
-rag = Prompter()
+prompter = Prompter()
 analyzer = Analyzer()
 llm = FakeGenerator()
-shatr_generator = ShatrGenerator(llm, prompter=rag, analyzer=analyzer)
+shatr_generator = ShatrGenerator(llm, prompter=prompter, analyzer=analyzer)
 
-def load_poets():
-    POETS_FILEPATH = 'poets.json'
-    poets = {}
-    with open(POETS_FILEPATH, 'r', encoding='utf-8') as f:
-        poets = json.load(f)
-    return [item['name'] for item in poets['poets']]
-
-BAHRS = ['الكامل', 'الوافر', 'الطويل', 'البسيط' ]
-POETS = load_poets() 
+BAHRS = ['الكامل', 'الوافر', 'الطويل', 'البسيط' ] # TODO: Load from Data
+POETS = list(load_poets().keys())
 
 def process_prompt(prompt, selected_bahr, selected_poet):
     if selected_poet == 'None':

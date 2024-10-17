@@ -1,22 +1,20 @@
-import json
 import random
+
+from Data import load_qafiyas, load_poets
 
 #class does all prompt-related formats.
 class Prompter:
-    def __init__(self, qawafi_filepath="qawafi-database.json", qafiya=None, poet=None):
+    def __init__(self, qafiya=None, poet=None):
         self.qafiya = qafiya
         self.qafiya_examples = None
-        self.db = None
+        self.qafiya_database = load_qafiyas()
+        self.poets_database = load_poets()
         self.poet = None
-        with open(qawafi_filepath, 'r', encoding="utf-8") as f:
-            self.db = json.load(f)["data"]
 
         if poet:
-            poets = load_poets()
-            poet_data = next((item for item in poets if item["name"] == poet), None)
-            if not poet_data:
+            if poet not in self.poets_database.keys():
                 raise ValueError(f"Poet not found in database: Could not find {poet} in 'poet.json'")
-            self.poet = poet_data
+            self.poet = self.poets_database[poet]
 
         self.setQafiya(qafiya)
     
@@ -58,7 +56,7 @@ class Prompter:
         
         full_text += "[/INST] "
 
-        if multi_gen:
+        if multi_gen: # FIXME: `previous_shatrs` could be None here, make sure to handle that
             if current_attempt:
                 full_text += f"هذه الأبيات كلها تبدأ بعبارة ({current_attempt}) ومن الممكن أن تأتي بعد البيت الأخير ({previous_shatrs[-1]}) ويمكنك استعمال أي واحدة منهن:\n1)"
             else:
@@ -93,7 +91,7 @@ class Prompter:
             return None
         
         output = []
-        for word in self.db:
+        for word in self.qafiya_database:
             new_word = processed(word)
             if new_word:
                 output.append(new_word)
@@ -143,18 +141,12 @@ class Prompter:
 
         return prompt
 
-        
-def load_poets():
-    with open("poets.json", 'r', encoding="utf-8") as f:
-        poets = json.load(f)["poets"]
-        return poets
-
 
 if __name__ == "__main__":
     r = Prompter()
     r.update("ب")
-    print(r.wrap("اكتب لي قصيدة عن الفراق", ["في بحور الغي والإثم غريقا"], None, "أخي"))
+    print(r.wrap_gen("اكتب لي قصيدة عن الفراق", ["في بحور الغي والإثم غريقا"], None, "أخي"))
     print('\n\n') 
     r = Prompter(poet="المتنبي")
     r.update("ق")
-    print(r.wrap("اكتب لي قصيدة عن الفراق", ["في بحور الغي والإثم غريقا"], None))
+    print(r.wrap_gen("اكتب لي قصيدة عن الفراق", ["في بحور الغي والإثم غريقا"], None))
