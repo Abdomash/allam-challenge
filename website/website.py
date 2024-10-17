@@ -28,16 +28,27 @@ analyzer = Analyzer()
 llm = FakeGenerator()
 shatr_generator = ShatrGenerator(llm, prompter=prompter, analyzer=analyzer)
 
-BAHRS = ['الكامل', 'الوافر', 'الطويل', 'البسيط' ] # TODO: Load from Data
+BAHRS = list(load_bohours().keys())
 POETS = list(load_poets().keys())
 
+current_bahr = None
+current_poet = None
 def process_prompt(prompt, selected_bahr, selected_poet):
+    global current_bahr
+    global current_poet
+
     if selected_poet == 'None':
         selected_poet = None
     if selected_bahr == 'None':
         selected_bahr = None
 
-    qasida = generate_qasida(prompt, shatr_generator, wazn=selected_bahr, poet=selected_poet)
+    if selected_poet != current_poet or selected_bahr != current_bahr:
+        current_bahr = selected_bahr
+        current_poet = selected_poet
+        llm = FakeGenerator(poet=selected_poet, wazn=selected_bahr)
+        shatr_generator.llm = llm
+
+    qasida = generate_qasida(prompt, shatr_generator, wazn=current_bahr, poet=current_poet)
     return qasida
 
 @app.route('/', methods=['GET', 'POST'])

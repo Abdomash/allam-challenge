@@ -67,14 +67,16 @@ class FakeGenerator(LLM_INTERFACE_GENERATOR):
                 raise ValueError(f"Poet not found in database: Could not find {poet} in 'poet.json'")
             self.poet = self.poets[poet]
         else:
-            self.poet = self.poets[random.choice(list(self.poets.keys()))]
+            # self.poet = self.poets[random.choice(list(self.poets.keys()))]
+            self.poet = self.poets["المتنبي"]
 
         if wazn: # in arabic
             if wazn not in self.bohours.keys():
                 raise ValueError(f"Bahr not found in database: Could not find {wazn} in 'bohours.json'")
             if not poet: 
-                self.poet = self.poets[random.choice(list(self.poets.keys()))]
-            self.poems = self.poet['poems'][wazn]
+                # self.poet = self.poets[random.choice(list(self.poets.keys()))]
+                self.poet = self.poets["المتنبي"]
+            self.poems = self.poet['poems'][self.bohours[wazn]['name_en']]
         else:
             self.poems = random.choice(list(self.poet['poems'].values()))
 
