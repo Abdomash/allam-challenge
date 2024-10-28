@@ -12,6 +12,7 @@ class ShatrGenerator:
         shatr = ""
         iters = 0
         new_shatr = ""
+        self.prompter.update(qafiya, None, wazn)
         while not valid and iters < 7:
             iters += 1
             # Generate a shatr
@@ -21,7 +22,7 @@ class ShatrGenerator:
             print(f"attempt {iters}: {shatr}")
             # Extract Wazn and Qafiya
             new_qafiya, new_wazn_name, new_wazn_combs, new_wazn_mismatch, diacritized, arudi_indices = self.analyzer.extract(shatr, expected_wazn_name=wazn)
-
+            
             if wazn is None:
                 wazn = new_wazn_name
             

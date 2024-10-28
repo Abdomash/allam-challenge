@@ -14,6 +14,13 @@ class LLM_INTERFACE_GENERATOR(ABC):
     def generate(self, prompt) -> str:
         pass
 
+class OpenAI_Generator(LLM_INTERFACE_GENERATOR):
+    def __init__(self, API_KEY):
+        pass
+
+    def generate(self, prompt):
+        pass
+
 class ALLAM_GENERATOR(LLM_INTERFACE_GENERATOR):
     def __init__(self, API_KEY):
         self.model_id = "sdaia/allam-1-13b-instruct"
@@ -89,7 +96,7 @@ class FakeGenerator(LLM_INTERFACE_GENERATOR):
             pass
 
         # cycle through the poem lines infinitely
-        self.poem = itertools.cycle(random.choice(self.poems)) 
+        self.poem = itertools.cycle(random.choice(self.poems))
 
     def generate(self, prompt=None):
         return next(self.poem)

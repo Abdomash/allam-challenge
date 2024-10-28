@@ -53,5 +53,5 @@ if __name__ == "__main__":
         prompt = input("Enter a prompt: ")
         if not prompt or prompt == "exit":
             break
-        qasida = generate_qasida(prompt, shatr_generator, length=2)
+        qasida = generate_qasida(prompt, shatr_generator, length=2, wazn="الكامل")
         print(qasida)

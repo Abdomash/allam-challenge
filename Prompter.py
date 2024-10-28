@@ -1,22 +1,25 @@
 import random
 
-from Data import load_qafiyas, load_poets
+from Data import *
+
+import itertools
+
 
 #class does all prompt-related formats.
 class Prompter:
-    def __init__(self, qafiya=None, poet=None):
+    def __init__(self, qafiya=None, poet=None, wazn=None):
         self.qafiya = qafiya
         self.qafiya_examples = None
         self.qafiya_database = load_qafiyas()
         self.poets_database = load_poets()
         self.poet = None
+        self.wazn = None
 
-        if poet:
-            if poet not in self.poets_database.keys():
-                raise ValueError(f"Poet not found in database: Could not find {poet} in 'poet.json'")
-            self.poet = self.poets_database[poet]
+        self.poets = load_poets()
+        self.bohours = load_bohours()
+        self.qafiyas = load_qafiyas()
 
-        self.setQafiya(qafiya)
+        self.update(qafiya, poet, wazn)
     
     def wrap_gen(self, prompt, previous_shatrs=None, feedback=None, current_attempt=None, multi_gen=False):
         full_text = "<s> [INST]\n"
@@ -36,6 +39,16 @@ class Prompter:
             full_text += ", ".join(random.sample(self.qafiya_examples, 10))
             full_text += "\n"
         
+        if self.wazn: #add wazn name and example bohour
+            abyat_examples = [next(self.poem) for i in range(10)] #5 abyat every call
+            if self.poet:
+                full_text += f"استخدم وزن بحر {self.wazn} لكتابة الأبيات. هذه أمثلة على أبيات شعرية كتبها الشاعر {self.poet} على بحر {self.wazn}:\n"
+            else:
+                full_text += f"استخدم وزن بحر {self.wazn} لكتابة الأبيات. هذه أمثلة على أبيات شعرية كتبت على بحر {self.wazn}:\n"
+            
+            full_text += '\n'.join(abyat_examples) + "\n"
+                
+
         if prompt:
             full_text += f"هنا الطلب اللي وضعه المستخدم:\n"
             full_text += f"{prompt}\n"
@@ -58,19 +71,46 @@ class Prompter:
 
         if multi_gen: # FIXME: `previous_shatrs` could be None here, make sure to handle that
             if current_attempt:
-                full_text += f"هذه الأبيات كلها تبدأ بعبارة ({current_attempt}) ومن الممكن أن تأتي بعد البيت الأخير ({previous_shatrs[-1]}) ويمكنك استعمال أي واحدة منهن:\n1)"
+                full_text += f"هذه الأبيات كلها تبدأ بعبارة ({current_attempt}) ومن الممكن أن تأتي بعد البيت الأخير ({previous_shatrs[-1]}) ويمكنك استعمال أي واحدة منهن:<s>\n1)"
             else:
-                full_text += f"هذه الأبيات كلها من الممكن أن تأتي بعد البيت الأخير ({previous_shatrs[-1]}) ويمكنك استعمال أي واحدة منهن:\n1) "
+                full_text += f"هذه الأبيات كلها من الممكن أن تأتي بعد البيت الأخير ({previous_shatrs[-1]}) ويمكنك استعمال أي واحدة منهن:<s>\n1) "
 
         if current_attempt:
             full_text += current_attempt
 
-        #print(full_text)
+        print(full_text)
         return full_text
     
-    def update(self, qafiya):
-        self.qafiya_examples = self.setQafiya(qafiya)
-        self.qafiya = qafiya
+    def update(self, qafiya=None, poet=None, wazn=None):
+        if poet: # in arabic
+            if poet not in self.poets.keys():
+                raise ValueError(f"Poet not found in database: Could not find {poet} in 'poet.json'")
+            self.poet = self.poets[poet]
+        else:
+            # self.poet = self.poets[random.choice(list(self.poets.keys()))]
+            self.poet = self.poets["المتنبي"]
+
+        if wazn: # in arabic
+            self.wazn = wazn
+            if wazn not in self.bohours.keys():
+                raise ValueError(f"Bahr not found in database: Could not find {wazn} in 'bohours.json'")
+            if not poet: 
+                # self.poet = self.poets[random.choice(list(self.poets.keys()))]
+                self.poet = self.poets["المتنبي"]
+            try:
+                self.poems = self.poet['poems'][self.bohours[wazn]['name_en']]
+                self.poems = [item for sublist in self.poems.values() for item in sublist]
+            except KeyError:
+                print(f"Poet {self.poet['name']} does not have any poems in {wazn}")
+                self.poems = [item for sublist in self.poet['poems'].values() for item in sublist]
+        else:
+            self.poems = [item for sublist in self.poet['poems'].values() for item in sublist]
+
+        # cycle through the poem lines infinitely
+        self.poem = itertools.cycle(self.poems)
+
+        if qafiya:
+            self.setQafiya(qafiya)
 
     def setQafiya(self, qafiya):
         if not qafiya:
@@ -146,7 +186,7 @@ if __name__ == "__main__":
     r = Prompter()
     r.update("ب")
     print(r.wrap_gen("اكتب لي قصيدة عن الفراق", ["في بحور الغي والإثم غريقا"], None, "أخي"))
-    print('\n\n') 
+    print('\n\n')
     r = Prompter(poet="المتنبي")
     r.update("ق")
     print(r.wrap_gen("اكتب لي قصيدة عن الفراق", ["في بحور الغي والإثم غريقا"], None))
