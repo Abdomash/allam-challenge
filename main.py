@@ -34,24 +34,25 @@ def generate_qasida(prompt, shatr_generator, wazn=None, qafiya=None, length=None
     
     shatrs = []
     for i in range(length):
-        shatr, w, q = shatr_generator.generate_shatr(prompt, wazn, qafiya, shatrs)
+        shatr, w, q = shatr_generator.generate_shatr(prompt, wazn, qafiya, None, shatrs)
         if wazn is None:
             wazn = w
-        if qafiya is None and i > 0:
+        if qafiya is None and i > 0: #only append qafiya on 2nd shatr
             qafiya = q
         shatrs.append(shatr.strip())
+        print(shatrs)
     
     return shatrs
 
 if __name__ == "__main__":
     api_key = os.environ.get("API_KEY")
-    #llm = ALLAM_GENERATOR(api_key)
+    llm = ALLAM_GENERATOR(api_key)
     rag = Prompter(poet="عنترة بن شداد")
-    llm = FakeGenerator()
+    #llm = FakeGenerator()
     shatr_generator = ShatrGenerator(llm, prompter=rag)
     while True:
         prompt = input("Enter a prompt: ")
         if not prompt or prompt == "exit":
             break
-        qasida = generate_qasida(prompt, shatr_generator, length=2, wazn="الكامل")
+        qasida = generate_qasida(prompt, shatr_generator, length=10, wazn="الكامل", qafiya="لا")
         print(qasida)

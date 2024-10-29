@@ -9,19 +9,17 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 BASE_URL = "https://eu-de.ml.cloud.ibm.com/ml/"
 
-class LLM_INTERFACE_GENERATOR(ABC):
-    @abstractmethod
-    def generate(self, prompt) -> str:
-        pass
-
-class OpenAI_Generator(LLM_INTERFACE_GENERATOR):
+class OpenAI_Generator:
     def __init__(self, API_KEY):
         pass
 
     def generate(self, prompt):
         pass
 
-class ALLAM_GENERATOR(LLM_INTERFACE_GENERATOR):
+
+BAYT_SEPARATORS = ["\n", "*", "#", '/', '.']
+
+class ALLAM_GENERATOR:
     def __init__(self, API_KEY):
         self.model_id = "sdaia/allam-1-13b-instruct"
         self.project_id = "0a443bde-e9c6-41dc-b1f2-65c6292030e4"
@@ -39,6 +37,16 @@ class ALLAM_GENERATOR(LLM_INTERFACE_GENERATOR):
         self.parameters = {
             "decoding_method": "sample",
             "max_new_tokens": 15,
+            "min_new_tokens": 5,
+            "temperature": 0.5,
+            "top_k": 40,
+            #"top_p": 0.5,
+            "repetition_penalty": 1.25,
+            "stop_sequences": BAYT_SEPARATORS,
+        }
+        self.critic_parameters = {
+            "decoding_method": "sample",
+            "max_new_tokens": 15,
             "temperature": 1.5,
             "top_k": 40,
             #"top_p": 1.0,
@@ -46,16 +54,16 @@ class ALLAM_GENERATOR(LLM_INTERFACE_GENERATOR):
             "stop_sequences": ["\n"],
         }
 
-    def generate(self, prompt):
+    def generate(self, prompt, is_critic=False):
         url = BASE_URL + "v1/text/generation?version=2024-08-30"
-        self.body = {
+        body = {
             "input": prompt,
             "model_id": self.model_id,
             "project_id": self.project_id,
             "parameters": self.parameters
         }
-
-        response = requests.post(url, headers=self.headers, json=self.body)
+        
+        response = requests.post(url, headers=self.headers, json=body)
         response.raise_for_status()
         
         data = response.json()
@@ -63,7 +71,7 @@ class ALLAM_GENERATOR(LLM_INTERFACE_GENERATOR):
     
 
 # A fake LLM for testing
-class FakeGenerator(LLM_INTERFACE_GENERATOR):
+class FakeGenerator:
     def __init__(self, poet=None, wazn=None, qafiya=None):
         self.poets = load_poets()
         self.bohours = load_bohours()
@@ -100,51 +108,3 @@ class FakeGenerator(LLM_INTERFACE_GENERATOR):
 
     def generate(self, prompt=None):
         return next(self.poem)
-
-class LLM_INTERFACE_CRITIC(ABC):
-    @abstractmethod
-    def critique(self, prompt) -> str:
-        pass
-
-class FakeCritic(LLM_INTERFACE_CRITIC):
-    def critique(self, prompt):
-        return "This is a fake critic."
-
-
-class ALLAM_CRITIC(LLM_INTERFACE_CRITIC):
-    def __init__(self, API_KEY):
-        self.model_id = "sdaia/allam-1-13b-instruct"
-        self.project_id = "0a443bde-e9c6-41dc-b1f2-65c6292030e4"
-
-        # get authentication token
-        authenticator = IAMAuthenticator(API_KEY)
-        token = authenticator.token_manager.get_token()
-        self.headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {token}'
-        }
-
-        # set default parameters
-        self.parameters = {
-            "decoding_method": "greedy",
-            "max_new_tokens": 200,
-            "repetition_penalty": 1.1,
-        }
-
-    def critique(self, prompt):
-        url = BASE_URL + "v1/text/generation?version=2024-08-30"
-
-        self.body = {
-            "input": prompt,
-            "model_id": self.model_id,
-            "project_id": self.project_id,
-            "parameters": self.parameters
-        }
-
-        response = requests.post(url, headers=self.headers, json=self.body)
-        response.raise_for_status()
-        
-        data = response.json()
-        return data['results'][0]['generated_text']
-

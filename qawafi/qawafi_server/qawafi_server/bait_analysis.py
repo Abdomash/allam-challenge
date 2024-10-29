@@ -225,7 +225,6 @@ class BaitAnalysis:
 
         arudi_indices = []
 
-
         def do_shatr(shatr):
             nonlocal diacritized_shatrs
             nonlocal diacritized_baits
@@ -266,8 +265,10 @@ class BaitAnalysis:
           diacritized_baits = [' # '.join(shatrs[2*i:2*i+2]) for i in range(len(shatrs)//2)]
           if len(diacritized_shatrs) % 2 == 1:
                 diacritized_baits.append(diacritized_shatrs[-1] + ' # ' + diacritized_shatrs[-1])
-        else:
+        elif len(diacritized_shatrs) == 1:
           diacritized_baits = [diacritized_shatrs[0] + ' # ' + diacritized_shatrs[0]]
+        else:
+            return None
             
 
         if predict_closest:
@@ -312,7 +313,7 @@ class BaitAnalysis:
                 patterns_mismatches.append(pattern_mismatch)
 
                 arudi_indices.append(shatr_indices)
-
+        
         analysis = {
             "diacritized": diacritized_baits,
             "arudi_style": shatrs_arudi_styles_and_patterns,

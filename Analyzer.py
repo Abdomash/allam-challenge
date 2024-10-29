@@ -26,7 +26,9 @@ class Analyzer:
     
     def get_first_mistake2(self, comb, ideal, ret_inf=False):
         no_error = 9999 if ret_inf else -1
-        too_little = len(comb)-1 if ret_inf else -2
+        
+        #too_little = len(comb)-1 if ret_inf else -2
+        too_little = len(comb)-1
         max_match_len = no_error
         for i in range(len(ideal)):
             if comb.find(ideal[:i]) in [0,1]: #first or second indexes only, ignore mistakes (khazm)
@@ -91,6 +93,9 @@ class Analyzer:
 
     def extract(self, shatr, expected_wazn_name=None): #returns qafiya type, wazn combs+name
         output = self.analyzer.analyze(shatrs=[shatr], short_qafiyah=True, override_tashkeel=True, predict_era=False, predict_closest=False, predict_theme=False)
+        if not output: #error, return
+            return None, None, None, 0, "", [0] #big error, return empty results, regen bayt
+
         #qafiya_type = output["qafiyah"]
         print(output["diacritized"][-1])
         wazn_name = output["meter"]
