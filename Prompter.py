@@ -58,8 +58,7 @@ class Prompter:
                 full_text += f"استخدم وزن بحر {self.wazn} لكتابة الأبيات. هذه أمثلة على أبيات شعرية كتبت على بحر {self.wazn}:\n"
             
             full_text += format_abyat(abyat_examples) #already has \n
-                
-
+            
         """
         if prompt:
             full_text += f"هنا الطلب اللي وضعه المستخدم:\n"
@@ -67,26 +66,22 @@ class Prompter:
         """
 
         if self.qafiya:
-            full_text += f" قافية القصيدة هي '{self.qafiya}'. "
-
-        if feedback: #FIXME TODO actually format it neatly. Move it after instruction maybe? User feedback??
-            full_text += "هنا بعض النصائح على هذا اخر شطر تم ادخاله:\n"
-            full_text += f"{feedback}\n"
+            full_text += f"اكتب قصيدتك على قافية '{self.qafiya}'، اي تأكد أن آخر كلمة في كل بيت تنتهي بهذه القافية '{self.qafiya}'.\n"
         
         if multi_gen:
-            full_text += "إبدأ بكتابة التكملات بحيث تكتب في كل سطر شطر ممكن أن يكمل القصيدة. \n"
+            full_text += "إبدأ بكتابة التكملات بحيث تكتب في كل سطر بيت ممكن أن يكمل القصيدة. \n"
             if current_attempt: 
                 full_text += f"أيضاً تأكد أن كل المحاولات تبدأ بعبارة ({current_attempt}).\n" 
 
         if self.qafiya_examples:
-            full_text += "هنا بعض الامثلة لكلمات تنتهي بالقافية المطلوبة. يمكنك استعمال اي واحدة منها لاتمام البيت، او استعمل كلمات مشابهه لها: "
+            full_text += f"هنا بعض الامثلة لكلمات تنتهي بقافية '{self.qafiya}'. يمكنك استعمال اي واحدة منها لاتمام الأبيات او استعمل كلمات مشابهة لها: "
             full_text += "\n"
-            full_text += ", ".join(random.sample(self.qafiya_examples, 10))
+            full_text += ", ".join(random.sample(self.qafiya_examples, 20))
             full_text += "\n"
 
         #full_text += "\n<</SYS>>\n" #end of system prompt
 
-        #add user prompt
+        #add user prompt here
         if prompt:
             full_text += f"{prompt}\n"
 
@@ -105,6 +100,18 @@ class Prompter:
             #full_text += '\n'.join(previous_shatrs)
             full_text += format_abyat(previous_shatrs)
             #full_text += '\n'
+        
+        if feedback: #feedback: list of {"bayt":[s0,s1], "feedback":"str"}
+            for f in feedback:
+                full_text += format_abyat(feedback["bayt"]) + "\n" #Allam wrote this.
+                full_text += '[INST] '
+                full_text += "هنا بعض النصائح على هذا اخر بيت تم ادخاله: " #user suggested things
+                full_text += feedback["feedback"]
+                full_text += "اعد كتابة آخر بيت مستخدما هذه التوجيهات: " #instructs Allam to rewrite the last line
+                full_text += '[/INST] \n'
+                #feedback format: {"bayt":[s0,s1], "feedback":"str"}
+                full_text += 'حسناً، هذه هو البيت الجديد الذي يستبدل آخر بيت في قصيدتي: ' #Allam responds, writes the line:
+                full_text += '\n'
 
         if current_attempt:
             full_text += current_attempt
@@ -141,11 +148,11 @@ class Prompter:
         self.poem = itertools.cycle(self.poems)
 
         if qafiya:
-            self.qafiya_examples = self.setQafiya(qafiya)
+            self.setQafiya(qafiya)
 
     def setQafiya(self, qafiya):
         if not qafiya:
-            return None
+            return
         
         if qafiya == self.qafiya:
             return #no need to process again
@@ -172,7 +179,7 @@ class Prompter:
             if new_word:
                 output.append(new_word)
 
-        return output
+        self.qafiya_examples = output
 
     def generate_feedback(self, type, invalid_item, expected_item, invalid_shatr):
         if type == "qafiya":

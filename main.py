@@ -26,11 +26,10 @@ def infer_qafiya(prompt):
 def infer_length(prompt):
     return 2
 
-def generate_qasida(prompt, shatr_generator, wazn=None, qafiya=None, length=None, poet=None):
+def generate_qasida(prompt, shatr_generator, wazn=None, qafiya=None, length=None):
     wazn = wazn or infer_wazn(prompt)
     qafiya = qafiya or infer_qafiya(prompt)
     length = length or infer_length(prompt)
-    poet = poet or None
     
     shatrs = []
     for i in range(length): #length = abyat

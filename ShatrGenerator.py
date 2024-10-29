@@ -15,7 +15,7 @@ class ShatrGenerator:
         self.prompter = prompter or Prompter()
         self.analyzer = analyzer or Analyzer()
         
-    def generate_shatr(self, prompt, wazn=None, qafiya=None, feedback=None, previous_shatrs=None):
+    def generate_shatr(self, prompt, wazn=None, qafiya=None, feedback=None, previous_shatrs=None, multi_gen=False): #generates a shatr with the correct wazn. Doesn't account for feedback here.
         valid = False
         shatr = ""
         iters = 0
@@ -29,10 +29,15 @@ class ShatrGenerator:
             iters += 1
             # Generate a shatr
             shatr = new_shatr
-            shatr += self.llm.generate(self.prompter.wrap_gen(prompt, previous_shatrs, feedback, shatr))
-            shatr = clean_bayt(shatr)
-            print("----------------------")
-            print(f"attempt {iters}: {shatr}")
+            if multi_gen:
+                shatrs_attempts = self.llm.generate(self.prompter.wrap_gen(prompt, previous_shatrs, feedback, shatr, multi_gen=True))
+                _, _, _, mism, _, _ = self.analyzer.extract(s, wazn)
+                #FIXME work in progress, might discontinue
+            else:
+                shatr += self.llm.generate(self.prompter.wrap_gen(prompt, previous_shatrs, feedback, shatr))
+                shatr = clean_bayt(shatr)
+                print("----------------------")
+                print(f"attempt {iters}: {shatr}")
             # Extract Wazn and Qafiya
             new_qafiya, new_wazn_name, new_wazn_combs, new_wazn_mismatch, diacritized, arudi_indices = self.analyzer.extract(shatr, expected_wazn_name=wazn)
             
@@ -68,14 +73,10 @@ class ShatrGenerator:
             if not valid_qafiya:
                 feedback = self.prompter.generate_feedback("qafiya", new_qafiya, qafiya, shatr)
                 print(feedback)
+                #SHOULD we do this here??
+                #
                 #shatr = ""
                 #continue  # Loop back to regenerate
-
-            # Update RAG and finalize shatr
-            if qafiya is None:
-                self.prompter.update(new_qafiya)
-                qafiya = new_qafiya
-
             valid = True
         
         print(f"wazn: {new_wazn_name}, qafiya: {qafiya}")

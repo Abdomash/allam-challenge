@@ -24,7 +24,7 @@ class CriticGen:
 		self.llm = llm
 		self.prompter = Prompter() #only using critic prompts
 	
-	def critic(self, bayt, prev_shatrs): #bayt -> [shatr0, shatr1], prev_shatrs = [s0,s1,s2,s3,..]
+	def critic(self, bayt, prev_shatrs, prev_feedbacks = None): #bayt -> [shatr0, shatr1], prev_shatrs = [s0,s1,s2,s3,..], prev_feedbacks = for this specific bayt
 		prompt = "<s> [INST]<<SYS>>\n"
 		prompt += CRITIC_SYS
 		prompt += "\n<</SYS>>\n"
@@ -34,10 +34,23 @@ class CriticGen:
 			prompt += format_abyat(prev_shatrs + bayt)
 			#prompt += f" {shatr}\n"
 			prompt += '\n'
-
-			prompt += "ما رأيك في اخر بيت من هذه القصيدة؟"
-			prompt += "البيت المقصود هو: "
-			prompt += f"{format_abyat(bayt)}\n"
+			if prev_feedbacks:
+				for i in range(prev_feedbacks):
+					if i == 0:
+						prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ "
+						prompt += "البيت المقصود هو: "
+						prompt += format_abyat(prev_feedbacks[i]["bayt"]) + '\n'
+						prompt += "[/INST] شكرا لسؤالك، هذه هي اقتراحاتي لهذا البيت: " + '\n'
+						prompt += prev_feedbacks[i]["feedback"]
+						prompt += "[INST] "
+					else:
+						prompt += "حسنا، أعدت كتابة البيت الأخير في قصيدتي. ما رأيك به الآن؟ "
+						prompt += '\n' + format_abyat(prev_feedbacks[i]["bayt"]) + '\n'
+						prompt += "[/INST] شكرا لسؤالك، هذه هي اقتراحاتي لهذا البيت الجديد: " + '\n'
+						prompt += prev_feedbacks[i]["feedback"]
+						prompt += "[INST] "
+			prompt += "تمام، أخذت نصائحك وأعدت صياغة البيت الأخير مرة أخرى. أعطني اقتراحات له"
+			prompt += '\n' + format_abyat(bayt) + '\n'
 		else:
 			prompt += "اليك هذا المطلع لقصيدتي:" + "\n"
 			prompt += format_abyat(bayt)
@@ -46,5 +59,11 @@ class CriticGen:
 		prompt += "[/INST] هذه اقتراحاتي لتحسين البيت: "
 		prompt += "\n1. "
 
-        #TODO, use LLM here, return points neatly formatted
+        #TODO return points neatly formatted
 		gen_ = self.llm.generate(prompt, True)
+		gen_ = "\n1. " + gen_
+
+		return gen_
+
+
+		
