@@ -69,7 +69,7 @@ class Prompter:
         if self.qafiya:
             full_text += f" قافية القصيدة هي '{self.qafiya}'. "
 
-        if feedback:
+        if feedback: #FIXME TODO actually format it neatly. Move it after instruction maybe? User feedback??
             full_text += "هنا بعض النصائح على هذا اخر شطر تم ادخاله:\n"
             full_text += f"{feedback}\n"
         

@@ -2,7 +2,7 @@ from Analyzer import Analyzer
 from Prompter import *
 
 #TODO make sure file works in other directories
-CRITIC_SYS = open("critic_sys.txt").read()
+CRITIC_SYS = open("critic_sys.txt", encoding="UTF-8").read()
 
 #chatter critic additional mode (CHAT)
 #user can send messages, receive them, etc.
@@ -25,25 +25,26 @@ class CriticGen:
 		self.prompter = Prompter() #only using critic prompts
 	
 	def critic(self, bayt, prev_shatrs): #bayt -> [shatr0, shatr1], prev_shatrs = [s0,s1,s2,s3,..]
-        prompt = "<s> [INST]<<SYS>>\n"
+		prompt = "<s> [INST]<<SYS>>\n"
 		prompt += CRITIC_SYS
-        prompt += "\n<</SYS>>\n"
+		prompt += "\n<</SYS>>\n"
 
-        if prev_shatrs is not None:
-            prompt += "اليك هذه القصيدة:\n"
-            prompt += format_abyat(prev_shatrs + bayt)
-            #prompt += f" {shatr}\n"
-            prompt += '\n'
+		if prev_shatrs is not None:
+			prompt += "اليك هذه القصيدة:\n"
+			prompt += format_abyat(prev_shatrs + bayt)
+			#prompt += f" {shatr}\n"
+			prompt += '\n'
 
-        	prompt += "ما رأيك في اخر بيت من هذه القصيدة؟"
-        	prompt += "البيت المقصود هو: "
-        	prompt += f"{shatr}\n"
+			prompt += "ما رأيك في اخر بيت من هذه القصيدة؟"
+			prompt += "البيت المقصود هو: "
+			prompt += f"{format_abyat(bayt)}\n"
 		else:
 			prompt += "اليك هذا المطلع لقصيدتي:" + "\n"
 			prompt += format_abyat(bayt)
+			prompt += "ما رأيك فيه؟" + "\n"
 
-        prompt += "\n[/INST] هذه اقتراحاتي لتحسين البيت: "
+		prompt += "[/INST] هذه اقتراحاتي لتحسين البيت: "
 		prompt += "\n1. "
 
-        #TODO, use LLM here, 
+        #TODO, use LLM here, return points neatly formatted
 		gen_ = self.llm.generate(prompt, True)

@@ -33,14 +33,24 @@ def generate_qasida(prompt, shatr_generator, wazn=None, qafiya=None, length=None
     poet = poet or None
     
     shatrs = []
-    for i in range(length):
-        shatr, w, q = shatr_generator.generate_shatr(prompt, wazn, qafiya, None, shatrs)
-        if wazn is None:
-            wazn = w
-        if qafiya is None and i > 0: #only append qafiya on 2nd shatr
-            qafiya = q
-        shatrs.append(shatr.strip())
-        print(shatrs)
+    for i in range(length): #length = abyat
+        feedback = None
+        best_shatrs = []
+        for runs in range(1): #how many feedback runs to do?
+            best_shatrs = []
+            shatr, w, q = shatr_generator.generate_shatr(prompt, wazn, (qafiya if i == 0 else None), feedback, shatrs)
+            if wazn is None:
+                wazn = w
+            if qafiya is None: #for 1st bayt, make sure qafiya matches. (Ma6la3 Qaseedah, qafiyah should be there in both shatrs)
+                qafiya = q
+            best_shatrs.append(shatr.strip())
+            
+            shatr, w, q = shatr_generator.generate_shatr(prompt, wazn, qafiya, feedback, shatrs)
+            best_shatrs.append(shatr.strip())
+            #TODO get feedback, run it back
+            feedback = None
+        shatrs.extend(best_shatrs) #get best attempt and store it
+
     
     return shatrs
 
