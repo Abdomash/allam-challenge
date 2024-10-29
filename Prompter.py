@@ -178,8 +178,8 @@ class Prompter:
         if type == "qafiya":
             return self.qafiya_feedback(invalid_item, expected_item, invalid_shatr)
         
-        if type == "wazn":
-            return self.wazn_feedback(invalid_item, expected_item, invalid_shatr)
+        #if type == "wazn":
+        #    return self.wazn_feedback(invalid_item, expected_item, invalid_shatr)
     
     def qafiya_feedback(self, invalid_qafiya, expected_qafiya, invalid_shatr):
         # TODO
@@ -202,27 +202,6 @@ class Prompter:
 
         return text
     """
-    
-    def build_critique_prompt(self, shatr, previous_shatrs=None):
-        prompt = "<s> [INST]<<SYS>>\n"
-
-        prompt += "\n<</SYS>>\n"
-
-        if previous_shatrs is not None:
-            prompt += "اليك هذه القصيدة:\n"
-            prompt += format_abyat(previous_shatrs + [shatr])
-            #prompt += f" {shatr}\n"
-            prompt += '\n'
-
-        prompt += "ما رأيك في اخر شطر من هذه القصيدة؟"
-        prompt += "الشطر المقصود هو: "
-        prompt += f"{shatr}\n"
-        prompt += "استخرج ٣ نقاط عن البيت اللتي يمكننا تطويرها."
-        prompt += "اكتب النقاط بشكل مختصر وواضح." 
-
-        prompt += "\n[/INST]"
-
-        return prompt
 
 
 if __name__ == "__main__":

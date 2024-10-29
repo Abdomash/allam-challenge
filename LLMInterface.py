@@ -45,12 +45,7 @@ class ALLAM_GENERATOR:
             "stop_sequences": BAYT_SEPARATORS,
         }
         self.critic_parameters = {
-            "decoding_method": "sample",
-            "max_new_tokens": 15,
-            "temperature": 1.5,
-            "top_k": 40,
-            #"top_p": 1.0,
-            "repetition_penalty": 1.25,
+            "decoding_method": "greedy",
             "stop_sequences": ["\n"],
         }
 
@@ -60,7 +55,7 @@ class ALLAM_GENERATOR:
             "input": prompt,
             "model_id": self.model_id,
             "project_id": self.project_id,
-            "parameters": self.parameters
+            "parameters": self.critic_parameters if is_critic else self.parameters
         }
         
         response = requests.post(url, headers=self.headers, json=body)
