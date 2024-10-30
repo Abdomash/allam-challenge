@@ -23,14 +23,18 @@ class ShatrGenerator:
         new_shatr = ""
         self.prompter.update(qafiya, None, wazn)
 
+        temp = 0.3 #little temp, increase as you go further into iters, to randomize more
+        #max ~1.0 (if 3 times wrong)
+
         last_mistake = -1 #use it to track if model is stuck
         last_repeats = -1 #if it is stuck, restart generation / increase temp
 
         while not valid and iters < 10:
+            print(f"Temp: {temp}")
             iters += 1
             # Generate a shatr
             shatr = new_shatr
-            shatr += self.llm.generate(self.prompter.wrap_gen(prompt, previous_shatrs, feedback, shatr))
+            shatr += self.llm.generate(self.prompter.wrap_gen(prompt, previous_shatrs, feedback, shatr), temp=temp)
             shatr = clean_bayt(shatr)
             print("----------------------")
             print(f"attempt {iters}: {shatr}")
@@ -49,15 +53,18 @@ class ShatrGenerator:
                 #print(feedback)
                 index_to_delete = arudi_indices[new_wazn_mismatch]
 
-                if last_mistake <= new_wazn_mismatch: #reached new point!
+                if last_mistake < new_wazn_mismatch: #reached new point!
                     last_repeats = 0
                     last_mistake = new_wazn_mismatch
+                    temp = 0.3 #reset temp back to low val
                     #iters -= 1 #give it some more room to gen
                 else:
                     last_repeats += 1
-                    if last_repeats > 3: #got stuck a number of times
+                    if last_repeats > 2: #got stuck a number of times
                         index_to_delete = 0 #restart whole generation.
+                        temp *= 1.5 #2 iters wrong, -> temp 0.45 ->, 4 iters 0.675 ->, 6 iters 1.01
                         #iters -= 1
+                        #increase temperature too.
 
 
                 new_shatr = self.cut_to_last_valid_word(diacritized, index_to_delete) #harakat means length of diacritized is double!
@@ -67,7 +74,7 @@ class ShatrGenerator:
             valid = True
         
         print(f"wazn: {new_wazn_name}, qafiya: {qafiya}")
-        return clean_bayt(shatr), new_wazn_name, qafiya
+        return clean_bayt(shatr), new_wazn_name, qafiya, valid
 
     def cut_to_last_valid_word(self, shatr, first_mistake):
         if " " in shatr[:first_mistake]:

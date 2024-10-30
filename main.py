@@ -17,7 +17,7 @@ def infer_qafiya(prompt):
 def infer_length(prompt):
     return 2
 
-def generate_qasida(prompt, shatr_generator, critic, wazn=None, qafiya=None, length=None):
+def generate_qasida(prompt, shatr_generator, critic: CriticGen, wazn=None, qafiya=None, length=None):
     wazn = wazn or infer_wazn(prompt)
     qafiya = qafiya or infer_qafiya(prompt)
     length = length or infer_length(prompt)
@@ -28,17 +28,27 @@ def generate_qasida(prompt, shatr_generator, critic, wazn=None, qafiya=None, len
         curr_bayt = []
         for runs in range(2): #how many feedback runs to do? i'm thinking just one
             curr_bayt = []
-            shatr, w, q = shatr_generator.generate_shatr(prompt, wazn, (qafiya if i == 0 else None), feedback, shatrs)
+            shatr, w, q, valid = shatr_generator.generate_shatr(prompt, wazn, (qafiya if i == 0 else None), feedback, shatrs)
             if wazn is None:
                 wazn = w
+            curr_bayt.append(shatr)
+            
+            shatr, w, q, valid2 = shatr_generator.generate_shatr(prompt, wazn, qafiya, feedback, shatrs + curr_bayt)
             if qafiya is None: #for 1st bayt, make sure qafiya matches. (Ma6la3 Qaseedah, qafiyah should be there in both shatrs)
                 qafiya = q
             curr_bayt.append(shatr)
-            
-            shatr, w, q = shatr_generator.generate_shatr(prompt, wazn, qafiya, feedback, shatrs + curr_bayt)
-            curr_bayt.append(shatr)
+            print(curr_bayt)
             #get feedback for this newest bayt
-            feedback.append(critic.critic(curr_bayt, shatrs, feedback))
+            hard_coded_feedback = []
+            if (q != qafiya):
+                print("QAFIYA FEEDBACK")
+                hard_coded_feedback.append(critic.hardcoded_qafiya_feedback(qafiya))
+            if not (valid and valid2): #wazn is still invalid, but ran out of iters
+                print("WAZN FEEDBACK")
+                hard_coded_feedback.append(critic.hard_coded_wazn_feedback(wazn))
+
+            feedback.append(critic.critic(curr_bayt, shatrs, feedback, hard_coded_feedback))
+            print("FEEDBACK: "+feedback[-1]["feedback"])
         shatrs.extend(curr_bayt) #get last attempt and store it
 
     
@@ -46,8 +56,8 @@ def generate_qasida(prompt, shatr_generator, critic, wazn=None, qafiya=None, len
 
 if __name__ == "__main__":
     api_key = os.environ.get("API_KEY")
-    #llm = ALLAM_GENERATOR(api_key)
-    llm = FakeGenerator(wazn="الكامل")
+    llm = ALLAM_GENERATOR(api_key)
+    #llm = FakeGenerator(wazn="الكامل")
     rag = Prompter(poet="عنترة بن شداد")
     critic = CriticGen(llm)
     #llm = FakeGenerator()

@@ -22,12 +22,29 @@ class CriticGen:
 	def __init__(self, llm):
 		self.llm = llm
 		self.prompter = Prompter() #only using critic prompts
+
+	def hardcoded_qafiya_feedback(self, expected_qafiya):
+		text = ""
+		text += "البيت هذا لا يتماشي مع القافية المطلوبة"
+		text += f" {expected_qafiya}. "
+		text += "أعد كتابة البيت، وتأكد أن آخر كلمة في البيت تنتهي بهذه القافية"
+		text += f" {expected_qafiya}. "
+
+		return text
+
+	def hard_coded_wazn_feedback(self, expected_wazn):
+		text = ""
+		text += "ركز جيداً في وزن هذا البيت. إنه مكسور ولا يطابق وزن بحر"
+		text += f" {expected_wazn}. "
+		text += "أعد كتابة البيت، وتأكد من انه منظوم وموزون على بحر"
+		text += f" {expected_wazn}. "
+		return text
 	
-	def critic(self, bayt, prev_shatrs, prev_feedbacks = None): #bayt -> [shatr0, shatr1], prev_shatrs = [s0,s1,s2,s3,..], prev_feedbacks = for this specific bayt
+	def critic(self, bayt, prev_shatrs, prev_feedbacks = None, hardcoded_feedback=None): #bayt -> [shatr0, shatr1], prev_shatrs = [s0,s1,s2,s3,..], prev_feedbacks = for this specific bayt
 		prompt = "<s> [INST]<<SYS>>\n"
 		prompt += CRITIC_SYS
 		prompt += "\n<</SYS>>\n\n"
-		
+
 		more_than_single_line = (prev_shatrs and len(prev_shatrs) > 0) #slightly change formatting if discussing opening line of poem vs. line in middle of poem.
 
 		if more_than_single_line:
@@ -68,13 +85,18 @@ class CriticGen:
 		prompt += "[/INST]  شكرا على سؤالك، هذه اقتراحاتي لتحسين البيت: "
 		prompt += "\n1. "
 
-		print(prompt)
+		#print(prompt)
 
         #TODO return points neatly formatted
 		gen_ = self.llm.generate(prompt, True)
 		gen_ = "\n1. " + gen_
 
+		#add hard-coded feedback here
+		if hardcoded_feedback:
+			gen_ += '\n' + '\n'.join(hardcoded_feedback)
+
 		feedback = {"bayt":bayt, "feedback":gen_}
+
 		return feedback
 
 

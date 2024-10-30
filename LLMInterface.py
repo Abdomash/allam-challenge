@@ -49,7 +49,7 @@ class ALLAM_GENERATOR:
             "decoding_method": "sample",
             "max_new_tokens": 15,
             "min_new_tokens": 5,
-            "temperature": 0.5,
+            "temperature": 0.3,
             "top_k": 40,
             #"top_p": 0.5,
             "repetition_penalty": 1.25,
@@ -57,10 +57,11 @@ class ALLAM_GENERATOR:
         }
         self.critic_parameters = {
             "decoding_method": "greedy",
-            "stop_sequences": ["\n"],
+            "max_new_tokens": 250,
+            #"stop_sequences": ["\n"],
         }
 
-    def generate(self, prompt, is_critic=False):
+    def generate(self, prompt, is_critic=False, temp=None):
         url = BASE_URL + "v1/text/generation?version=2024-08-30"
         body = {
             "input": prompt,
@@ -68,6 +69,11 @@ class ALLAM_GENERATOR:
             "project_id": self.project_id,
             "parameters": self.critic_parameters if is_critic else self.parameters
         }
+
+        if temp:
+            body["parameters"]["temperature"] = temp
+        else:
+            body["parameters"]["temperature"] = 0.3
         
         response = requests.post(url, headers=self.headers, json=body)
         response.raise_for_status()
