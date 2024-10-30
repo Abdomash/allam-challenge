@@ -29,35 +29,46 @@ class CriticGen:
 		prompt += CRITIC_SYS
 		prompt += "\n<</SYS>>\n"
 
-		if prev_shatrs is not None:
+		if prev_shatrs:
 			prompt += "اليك هذه القصيدة:\n"
-			prompt += format_abyat(prev_shatrs + bayt)
-			#prompt += f" {shatr}\n"
-			prompt += '\n'
 			if prev_feedbacks:
-				for i in range(prev_feedbacks):
-					if i == 0:
-						prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ "
-						prompt += "البيت المقصود هو: "
-						prompt += format_abyat(prev_feedbacks[i]["bayt"]) + '\n'
-						prompt += "[/INST] شكرا لسؤالك، هذه هي اقتراحاتي لهذا البيت: " + '\n'
-						prompt += prev_feedbacks[i]["feedback"]
-						prompt += "[INST] "
-					else:
-						prompt += "حسنا، أعدت كتابة البيت الأخير في قصيدتي. ما رأيك به الآن؟ "
-						prompt += '\n' + format_abyat(prev_feedbacks[i]["bayt"]) + '\n'
-						prompt += "[/INST] شكرا لسؤالك، هذه هي اقتراحاتي لهذا البيت الجديد: " + '\n'
-						prompt += prev_feedbacks[i]["feedback"]
-						prompt += "[INST] "
-			prompt += "تمام، أخذت نصائحك وأعدت صياغة البيت الأخير مرة أخرى. أعطني اقتراحات له"
-			prompt += '\n' + format_abyat(bayt) + '\n'
+				prompt += format_abyat(prev_shatrs + prev_feedbacks[0]["bayt"]) #add first attempt for a bayt here
+			else:
+				prompt += format_abyat(prev_shatrs + bayt)
 		else:
-			prompt += "اليك هذا المطلع لقصيدتي:" + "\n"
+			prompt += "اليك هذا المطلع (اول بيت) لقصيدتي:" + "\n"
 			prompt += format_abyat(bayt)
-			prompt += "ما رأيك فيه؟" + "\n"
+			#prompt += f" {shatr}\n"
+			#prompt += '\n'
+		if prev_feedbacks:
+			first = True
+			for f in prev_feedbacks:
+				if first:
+					prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ " if prev_shatrs else "ما رأيك فيه؟"
+					prompt += "البيت المقصود هو: " if prev_shatrs else ""
+					prompt += format_abyat(f["bayt"]) if prev_shatrs else ""
+					prompt += "<s>[/INST] شكرا لسؤالك، هذه هي اقتراحاتي لهذا البيت: " + '\n'
+					prompt += f["feedback"]
+					prompt += "</s>[INST] "
+					first = False
+				else:
+					prompt += "حسنا، أعدت كتابة البيت الأخير في قصيدتي. ما رأيك به الآن؟ " if prev_shatrs else  "حسنا، أعدت كتابة البيت. ما رأيك به الآن؟ "
+					prompt += '\n' + format_abyat(f["bayt"])
+					prompt += "<s>[/INST] شكرا على سؤالك، هذه هي اقتراحاتي لهذا البيت الجديد: " + '\n'
+					prompt += f["feedback"]
+					prompt += "</s>[INST] "
+			prompt += "تمام، أخذت نصائحك وأعدت صياغة البيت مرة أخرى. أعطني اقتراحات له"
+			prompt += '\n' + format_abyat(bayt)
+			prompt += "<s>"
+		else:
+			prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ " if prev_shatrs else "ما رأيك فيه؟"
+			prompt += "البيت المقصود هو: " if prev_shatrs else ""
+			prompt += format_abyat(bayt) if prev_shatrs else ""
 
-		prompt += "[/INST] هذه اقتراحاتي لتحسين البيت: "
+		prompt += "[/INST] شكرا على سؤالك، هذه اقتراحاتي لتحسين البيت: "
 		prompt += "\n1. "
+
+		print(prompt)
 
         #TODO return points neatly formatted
 		gen_ = self.llm.generate(prompt, True)
@@ -66,4 +77,29 @@ class CriticGen:
 		return gen_
 
 
+if __name__ == "__main__":
+	from LLMInterface import FakeGenerator, ALLAM_GENERATOR, load_env
+	import os
+	load_env(".env")
+	api_key = os.environ.get("API_KEY")
+	#k = CriticGen(ALLAM_GENERATOR(api_key))
+	k = CriticGen(FakeGenerator())
+	
+	k.critic(["",""], None, None) #m6l3 of qasidah (only 1 line), no feedback
+
+	k.critic(["",""], None, [
+		{"bayt":["",""], "feedback":""},
+		{"bayt":["",""], "feedback":""}
+	])
+	#m6l3 of qasidah, with feedback
+
+	k.critic(["",""], ["","","",""]) #prev_shatrs exists, but no feedback
+
+	k.critic(["لالالالا", "علعلعلعلعل"], [
+		"بلبلبلبلبل", "hi",
+		"2","3"
+		],
+		[{"bayt":["ييييييي","hi"], "feedback":"good"},
+   {"bayt":["ok 2nd", "3rd"], "feedback":"better"}]
+	) #feedback exists + prev_shatrs exists
 		

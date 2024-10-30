@@ -7,6 +7,17 @@ from Data import load_qafiyas, load_poets, load_bohours
 from abc import ABC, abstractmethod
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
+import os
+def load_env(file_path):
+    """Load environment variables from a .env file."""
+    with open(file_path) as f:
+        for line in f:
+            # Remove comments and whitespace
+            line = line.strip()
+            if line and not line.startswith('#'):
+                key, value = line.split('=', 1)
+                os.environ[key] = value
+
 BASE_URL = "https://eu-de.ml.cloud.ibm.com/ml/"
 
 class OpenAI_Generator:
@@ -101,5 +112,5 @@ class FakeGenerator:
         # cycle through the poem lines infinitely
         self.poem = itertools.cycle(random.choice(self.poems))
 
-    def generate(self, prompt=None):
+    def generate(self, prompt=None, is_critic=False):
         return next(self.poem)

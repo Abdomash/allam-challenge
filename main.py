@@ -1,18 +1,8 @@
 import os
 import random
-from LLMInterface import ALLAM_GENERATOR, FakeGenerator
+from LLMInterface import ALLAM_GENERATOR, FakeGenerator, load_env
 from ShatrGenerator import ShatrGenerator
 from Prompter import Prompter
-
-def load_env(file_path):
-    """Load environment variables from a .env file."""
-    with open(file_path) as f:
-        for line in f:
-            # Remove comments and whitespace
-            line = line.strip()
-            if line and not line.startswith('#'):
-                key, value = line.split('=', 1)
-                os.environ[key] = value
 
 load_env(".env")
 

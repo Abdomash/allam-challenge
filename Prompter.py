@@ -103,12 +103,14 @@ class Prompter:
         
         if feedback: #feedback: list of {"bayt":[s0,s1], "feedback":"str"}
             for f in feedback:
-                full_text += format_abyat(feedback["bayt"]) + "\n" #Allam wrote this.
+                full_text += format_abyat(f["bayt"]) + "\n" #Allam wrote this.
+                full_text += "</s>" #stop token
                 full_text += '[INST] '
-                full_text += "هنا بعض النصائح على هذا اخر بيت تم ادخاله: " #user suggested things
-                full_text += feedback["feedback"]
+                full_text += "البيت الآخير من القصيدة قد يحتاج إلى تغير. هذه توجيهات من محلل شعري قام بنقد هذا البيت واستخرج نقاط ممكن أن تحسن البيت من حيث معاني الكلمات والتصوير والمجازات: " #user suggested things
+                full_text += "'"
+                full_text += f["feedback"] + "'\n" #open close quotations from critic says
                 full_text += "اعد كتابة آخر بيت مستخدما هذه التوجيهات: " #instructs Allam to rewrite the last line
-                full_text += '[/INST] \n'
+                full_text += '[/INST] <s> \n'
                 #feedback format: {"bayt":[s0,s1], "feedback":"str"}
                 full_text += 'حسناً، هذه هو البيت الجديد الذي يستبدل آخر بيت في قصيدتي: ' #Allam responds, writes the line:
                 full_text += '\n'
@@ -219,3 +221,12 @@ if __name__ == "__main__":
     r = Prompter(poet="المتنبي")
     r.update("ق")
     print(r.wrap_gen("اكتب لي قصيدة عن الفراق", ["في بحور الغي والإثم غريقا"], None))
+
+    feedbacks = [
+        {"bayt": ["أَلا اِنعِم صَباحاً أَيُّها الرَبعُ وَاِنطِقِ","وَحَدِّث حَديثَ الرَكبِ إِن شِئتَ وَاِصدُقِ"], "feedback":"معلومات عن امرؤ القيس"},
+        {"bayt": ["وَحَدِّث بِأَن زالَت بِلَيلٍ حُمولُهُم","كَنَخلٍ مِنَ الأَعراضِ غَيرِ مُنَبِّقِ"], "feedback":"القافية غلط"}
+    ]
+    print(r.wrap_gen("اكتب لي قصيدة عن الفراق", ["وَفَوقَ الحَوايا غِزلَةٌ وَجَآذِرٌ",
+                                                 "تَضَمَّخنَ مِن مِسكٍ ذَكِيٍّ وَزَنبَقِ",
+                                                 "فَأَتبَعتُهُم طَرفي وَقَد حالَ دونَهُم",
+                                                 "غَوارِبُ رَملٍ ذي أَلاءٍ وَشَبرَقِ"], feedbacks, "try this.."))
