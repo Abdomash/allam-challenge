@@ -27,8 +27,10 @@ class CriticGen:
 		prompt = "<s> [INST]<<SYS>>\n"
 		prompt += CRITIC_SYS
 		prompt += "\n<</SYS>>\n\n"
+		
+		more_than_single_line = (prev_shatrs and len(prev_shatrs) > 0) #slightly change formatting if discussing opening line of poem vs. line in middle of poem.
 
-		if prev_shatrs:
+		if more_than_single_line:
 			prompt += "اليك هذه القصيدة:\n"
 			if prev_feedbacks:
 				prompt += format_abyat(prev_shatrs + prev_feedbacks[0]["bayt"]) #add first attempt for a bayt here
@@ -43,15 +45,15 @@ class CriticGen:
 			first = True
 			for f in prev_feedbacks:
 				if first:
-					prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ " if prev_shatrs else "ما رأيك فيه؟"
-					prompt += "البيت المقصود هو: " if prev_shatrs else ""
-					prompt += format_abyat(f["bayt"]) if prev_shatrs else ""
+					prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ " if more_than_single_line else "ما رأيك فيه؟"
+					prompt += "البيت المقصود هو: " if more_than_single_line else ""
+					prompt += format_abyat(f["bayt"]) if more_than_single_line else ""
 					prompt += "[/INST]  شكرا على سؤالك، هذه هي اقتراحاتي لهذا البيت: " + '\n'
 					prompt += f["feedback"]
 					prompt += " </s><s> [INST] "
 					first = False
 				else:
-					prompt += "حسنا، أعدت كتابة البيت الأخير في قصيدتي. ما رأيك به الآن؟ " if prev_shatrs else  "حسنا، أعدت كتابة البيت. ما رأيك به الآن؟ "
+					prompt += "حسنا، أعدت كتابة البيت الأخير في قصيدتي. ما رأيك به الآن؟ " if more_than_single_line else  "حسنا، أعدت كتابة البيت. ما رأيك به الآن؟ "
 					prompt += '\n' + format_abyat(f["bayt"])
 					prompt += "[/INST]  شكرا على سؤالك، هذه هي اقتراحاتي لهذا البيت الجديد: " + '\n'
 					prompt += f["feedback"]
@@ -59,9 +61,9 @@ class CriticGen:
 			prompt += "تمام، أخذت نصائحك وأعدت صياغة البيت مرة أخرى. أعطني اقتراحات له"
 			prompt += '\n' + format_abyat(bayt)
 		else:
-			prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ " if prev_shatrs else "ما رأيك فيه؟"
-			prompt += "البيت المقصود هو: " if prev_shatrs else ""
-			prompt += format_abyat(bayt) if prev_shatrs else ""
+			prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ " if more_than_single_line else "ما رأيك فيه؟"
+			prompt += "البيت المقصود هو: " if more_than_single_line else ""
+			prompt += format_abyat(bayt) if more_than_single_line else ""
 
 		prompt += "[/INST]  شكرا على سؤالك، هذه اقتراحاتي لتحسين البيت: "
 		prompt += "\n1. "
@@ -72,7 +74,8 @@ class CriticGen:
 		gen_ = self.llm.generate(prompt, True)
 		gen_ = "\n1. " + gen_
 
-		return gen_
+		feedback = {"bayt":bayt, "feedback":gen_}
+		return feedback
 
 
 if __name__ == "__main__":

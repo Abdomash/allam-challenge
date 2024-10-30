@@ -7,15 +7,16 @@ def clean_bayt(bait): #cleans / removes *,/,newline,. etc from bayt
     new_b = bait
     for i in BAYT_SEPARATORS:
         new_b = new_b.replace(i, "")
-    return new_b
+    return new_b.strip()
 
 class ShatrGenerator:
     def __init__(self, llm, prompter=None, analyzer=None):
         self.llm = llm
         self.prompter = prompter or Prompter()
         self.analyzer = analyzer or Analyzer()
-        
-    def generate_shatr(self, prompt, wazn=None, qafiya=None, feedback=None, previous_shatrs=None, multi_gen=False): #generates a shatr with the correct wazn. Doesn't account for feedback here.
+    
+    #no qafiya validation here. Will do in larger loop, where we compare it to 
+    def generate_shatr(self, prompt, wazn=None, qafiya=None, feedback=None, previous_shatrs=None): #generates a shatr with the correct wazn. Doesn't account for feedback here.
         valid = False
         shatr = ""
         iters = 0
@@ -29,15 +30,10 @@ class ShatrGenerator:
             iters += 1
             # Generate a shatr
             shatr = new_shatr
-            if multi_gen:
-                shatrs_attempts = self.llm.generate(self.prompter.wrap_gen(prompt, previous_shatrs, feedback, shatr, multi_gen=True))
-                _, _, _, mism, _, _ = self.analyzer.extract(s, wazn)
-                #FIXME work in progress, might discontinue
-            else:
-                shatr += self.llm.generate(self.prompter.wrap_gen(prompt, previous_shatrs, feedback, shatr))
-                shatr = clean_bayt(shatr)
-                print("----------------------")
-                print(f"attempt {iters}: {shatr}")
+            shatr += self.llm.generate(self.prompter.wrap_gen(prompt, previous_shatrs, feedback, shatr))
+            shatr = clean_bayt(shatr)
+            print("----------------------")
+            print(f"attempt {iters}: {shatr}")
             # Extract Wazn and Qafiya
             new_qafiya, new_wazn_name, new_wazn_combs, new_wazn_mismatch, diacritized, arudi_indices = self.analyzer.extract(shatr, expected_wazn_name=wazn)
             
@@ -56,31 +52,22 @@ class ShatrGenerator:
                 if last_mistake <= new_wazn_mismatch: #reached new point!
                     last_repeats = 0
                     last_mistake = new_wazn_mismatch
-                    iters -= 1 #give it some more room to gen
+                    #iters -= 1 #give it some more room to gen
                 else:
                     last_repeats += 1
                     if last_repeats > 3: #got stuck a number of times
                         index_to_delete = 0 #restart whole generation.
-                        iters -= 1
+                        #iters -= 1
 
 
                 new_shatr = self.cut_to_last_valid_word(diacritized, index_to_delete) #harakat means length of diacritized is double!
                 print(f"cut shatr: {new_shatr}")
                 continue # Loop back to regenerate
-
-            # Validate Qafiya
-            valid_qafiya = (new_qafiya == qafiya) if qafiya is not None else True
-            if not valid_qafiya:
-                feedback = self.prompter.generate_feedback("qafiya", new_qafiya, qafiya, shatr)
-                print(feedback)
-                #SHOULD we do this here??
-                #
-                #shatr = ""
-                #continue  # Loop back to regenerate
+            
             valid = True
         
         print(f"wazn: {new_wazn_name}, qafiya: {qafiya}")
-        return shatr, new_wazn_name, qafiya
+        return clean_bayt(shatr), new_wazn_name, qafiya
 
     def cut_to_last_valid_word(self, shatr, first_mistake):
         if " " in shatr[:first_mistake]:

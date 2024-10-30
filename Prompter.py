@@ -98,7 +98,11 @@ class Prompter:
         if previous_shatrs:
             #full_text += "هنا الشطور السابقة:\n"
             #full_text += '\n'.join(previous_shatrs)
-            full_text += format_abyat(previous_shatrs)
+            if len(previous_shatrs) % 2 == 0:
+                full_text += format_abyat(previous_shatrs)
+            else:
+                full_text += format_abyat(previous_shatrs[:-1]) #last shatr is part of the new attempt. Include it below
+                current_attempt = format_abyat([previous_shatrs[-1]]) + current_attempt
             #full_text += '\n'
         
         if feedback: #feedback: list of {"bayt":[s0,s1], "feedback":"str"}
@@ -107,7 +111,7 @@ class Prompter:
                 full_text += "</s>" #stop token
                 full_text += '[INST] '
                 full_text += "البيت الآخير من القصيدة قد يحتاج إلى تغير. هذه توجيهات من محلل شعري قام بنقد هذا البيت واستخرج نقاط ممكن أن تحسن البيت من حيث معاني الكلمات والتصوير والمجازات: " #user suggested things
-                full_text += "'"
+                full_text += "\n'"
                 full_text += f["feedback"] + "'\n" #open close quotations from critic says
                 full_text += "اعد كتابة آخر بيت مستخدما هذه التوجيهات: " #instructs Allam to rewrite the last line
                 full_text += '[/INST] <s> \n'
