@@ -1,4 +1,3 @@
-from Analyzer import Analyzer
 from Prompter import *
 
 #TODO make sure file works in other directories
@@ -27,7 +26,7 @@ class CriticGen:
 	def critic(self, bayt, prev_shatrs, prev_feedbacks = None): #bayt -> [shatr0, shatr1], prev_shatrs = [s0,s1,s2,s3,..], prev_feedbacks = for this specific bayt
 		prompt = "<s> [INST]<<SYS>>\n"
 		prompt += CRITIC_SYS
-		prompt += "\n<</SYS>>\n"
+		prompt += "\n<</SYS>>\n\n"
 
 		if prev_shatrs:
 			prompt += "اليك هذه القصيدة:\n"
@@ -47,25 +46,24 @@ class CriticGen:
 					prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ " if prev_shatrs else "ما رأيك فيه؟"
 					prompt += "البيت المقصود هو: " if prev_shatrs else ""
 					prompt += format_abyat(f["bayt"]) if prev_shatrs else ""
-					prompt += "<s>[/INST] شكرا لسؤالك، هذه هي اقتراحاتي لهذا البيت: " + '\n'
+					prompt += "[/INST]  شكرا على سؤالك، هذه هي اقتراحاتي لهذا البيت: " + '\n'
 					prompt += f["feedback"]
-					prompt += "</s>[INST] "
+					prompt += " </s><s> [INST] "
 					first = False
 				else:
 					prompt += "حسنا، أعدت كتابة البيت الأخير في قصيدتي. ما رأيك به الآن؟ " if prev_shatrs else  "حسنا، أعدت كتابة البيت. ما رأيك به الآن؟ "
 					prompt += '\n' + format_abyat(f["bayt"])
-					prompt += "<s>[/INST] شكرا على سؤالك، هذه هي اقتراحاتي لهذا البيت الجديد: " + '\n'
+					prompt += "[/INST]  شكرا على سؤالك، هذه هي اقتراحاتي لهذا البيت الجديد: " + '\n'
 					prompt += f["feedback"]
-					prompt += "</s>[INST] "
+					prompt += " </s><s> [INST] "
 			prompt += "تمام، أخذت نصائحك وأعدت صياغة البيت مرة أخرى. أعطني اقتراحات له"
 			prompt += '\n' + format_abyat(bayt)
-			prompt += "<s>"
 		else:
 			prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ " if prev_shatrs else "ما رأيك فيه؟"
 			prompt += "البيت المقصود هو: " if prev_shatrs else ""
 			prompt += format_abyat(bayt) if prev_shatrs else ""
 
-		prompt += "[/INST] شكرا على سؤالك، هذه اقتراحاتي لتحسين البيت: "
+		prompt += "[/INST]  شكرا على سؤالك، هذه اقتراحاتي لتحسين البيت: "
 		prompt += "\n1. "
 
 		print(prompt)
@@ -84,16 +82,22 @@ if __name__ == "__main__":
 	api_key = os.environ.get("API_KEY")
 	#k = CriticGen(ALLAM_GENERATOR(api_key))
 	k = CriticGen(FakeGenerator())
-	
-	k.critic(["",""], None, None) #m6l3 of qasidah (only 1 line), no feedback
 
-	k.critic(["",""], None, [
-		{"bayt":["",""], "feedback":""},
-		{"bayt":["",""], "feedback":""}
+	k.critic(["m6l31","m6l32"], None, None) #m6l3 of qasidah (only 1 line), no feedback
+
+	print("-----------------------")
+
+	k.critic(["m6l31","m6l32"], None, [
+		{"bayt":["00","01"], "feedback":"badd"},
+		{"bayt":["02","03"], "feedback":"okay"}
 	])
 	#m6l3 of qasidah, with feedback
 
-	k.critic(["",""], ["","","",""]) #prev_shatrs exists, but no feedback
+	print("-----------------------")
+
+	k.critic(["0101","1010"], ["99","88","77","66"]) #prev_shatrs exists, but no feedback
+
+	print("-----------------------")
 
 	k.critic(["لالالالا", "علعلعلعلعل"], [
 		"بلبلبلبلبل", "hi",
@@ -102,4 +106,6 @@ if __name__ == "__main__":
 		[{"bayt":["ييييييي","hi"], "feedback":"good"},
    {"bayt":["ok 2nd", "3rd"], "feedback":"better"}]
 	) #feedback exists + prev_shatrs exists
+
+	print("-----------------------")
 		
