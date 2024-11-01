@@ -91,7 +91,14 @@ class FakeGenerator:
 
         if poet: # in arabic
             if poet not in self.poets.keys():
-                raise ValueError(f"Poet not found in database: Could not find {poet} in 'poet.json'")
+                # poet = random.choice(list(self.poets.keys()))
+                poet = "المتنبي"
+            
+            if poet == 'علام':
+                print("ALLAM doesn't have any poems, so we'll choose another poet")
+                # poet = random.choice(list(self.poets.keys() - {'علام'}))
+                poet = "المتنبي"
+            
             self.poet = self.poets[poet]
         else:
             # self.poet = self.poets[random.choice(list(self.poets.keys()))]
@@ -99,7 +106,11 @@ class FakeGenerator:
 
         if wazn: # in arabic
             if wazn not in self.bohours.keys():
-                raise ValueError(f"Bahr not found in database: Could not find {wazn} in 'bohours.json'")
+                # raise ValueError(f"Bahr not found in database: Could not find {wazn} in 'bohours.json'")
+                print(f"Selected wazn {wazn} not found in the database, using a random wazn instead")
+                # wazn = random.choice(list(self.bohours.keys()))
+                wazn = "الكامل"
+
             if not poet: 
                 # self.poet = self.poets[random.choice(list(self.poets.keys()))]
                 self.poet = self.poets["المتنبي"]
@@ -118,5 +129,5 @@ class FakeGenerator:
         # cycle through the poem lines infinitely
         self.poem = itertools.cycle(random.choice(self.poems))
 
-    def generate(self, prompt=None, is_critic=False):
+    def generate(self, prompt=None, is_critic=False, temp=None):
         return next(self.poem)

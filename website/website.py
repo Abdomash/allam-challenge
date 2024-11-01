@@ -9,6 +9,7 @@ from flask_session import Session
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
+from Critic import CriticGen
 from LLMInterface import FakeGenerator
 from ShatrGenerator import ShatrGenerator
 from Prompter import Prompter
@@ -26,6 +27,7 @@ Session(app)
 prompter = Prompter()
 analyzer = Analyzer()
 llm = FakeGenerator()
+critic = CriticGen(llm)
 shatr_generator = ShatrGenerator(llm, prompter=prompter, analyzer=analyzer)
 
 BAHRS = list(load_bohours().keys())
@@ -46,9 +48,10 @@ def process_prompt(prompt, selected_bahr, selected_poet):
         current_bahr = selected_bahr
         current_poet = selected_poet
         llm = FakeGenerator(poet=selected_poet, wazn=selected_bahr)
+        prompter.update(wazn=selected_bahr, poet=selected_poet)
         shatr_generator.llm = llm
-
-    qasida = generate_qasida(prompt, shatr_generator, wazn=current_bahr, poet=current_poet)
+        
+    qasida = generate_qasida(prompt, shatr_generator, critic=critic, wazn=current_bahr)
     return qasida
 
 @app.route('/', methods=['GET', 'POST'])
@@ -61,15 +64,13 @@ def chat():
         selected_bahr = request.form['bahr']
         selected_poet = request.form['poet']
         output = process_prompt(user_input, selected_bahr, selected_poet)
-        # Append to the chat log
         session['chat_log'].append({'prompt': user_input, 'response': output})
     
-    # Reverse the chat log to display newest messages first
     return render_template('index.html', chat_log=reversed(session['chat_log']), poets=POETS, bahrs=BAHRS)
 
 @app.route('/clear', methods=['POST'])
 def clear_chat():
-    session.pop('chat_log', None)  # Remove the chat log from session
+    session.pop('chat_log', None) 
     return redirect(url_for('chat'))
 
 if __name__ == '__main__':

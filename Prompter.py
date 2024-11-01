@@ -51,7 +51,13 @@ class Prompter:
             full_text += "\n"
         
         if self.wazn: #add wazn name and example bohour
-            abyat_examples = [next(self.poem) for i in range(10)] #5 abyat every call
+
+            abyat_examples = []
+            try: # get 5 abyat from the poet
+                abyat_examples = [next(self.poem) for _ in range(10)]
+            except StopIteration:
+                print("self.poem is empty ")
+
             if self.poet:
                 full_text += f"استخدم وزن بحر {self.wazn} لكتابة الأبيات. هذه أمثلة على أبيات شعرية كتبها الشاعر {self.poet['name']} على بحر {self.wazn}:\n"
             else:
