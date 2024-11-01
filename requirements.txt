@@ -3,6 +3,7 @@ ibm-watsonx-ai
 ibm-cloud-sdk-core
 flask
 flask-session
+flask_socketio
 diacritization-evaluation==0.5
 tqdm==4.56.0
 pyarabic

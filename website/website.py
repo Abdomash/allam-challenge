@@ -1,9 +1,9 @@
 import sys
 import os
-import json
 
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_session import Session
+from flask_socketio import SocketIO
 
 # Add reference to parent directory
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -16,12 +16,18 @@ from Prompter import Prompter
 from Analyzer import Analyzer
 from main import generate_qasida
 from Data import load_poets, load_bohours
+from Logger import Logger
 
 # Initialize The Flask App
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SESSION_TYPE'] = 'filesystem'  # Use server-side session
 Session(app)
+socketio = SocketIO(app)
+
+# Initialize the logger
+Logger.initialize('website', socketio=socketio)
+LOGGER = Logger.get_logger()
 
 # Initialize heavy components
 prompter = Prompter()
