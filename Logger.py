@@ -12,7 +12,8 @@ class Logger:
     @classmethod
     def initialize(cls, name, filepath=None, socketio=None):
         if cls._instance is not None:
-            raise RuntimeError("Logger already initialized.")
+            cls._instance.logger.warning("Logger already initialized.")
+            return cls._instance
         cls._instance = cls(name, filepath, socketio)
     
     @classmethod

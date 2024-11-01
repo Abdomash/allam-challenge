@@ -1,5 +1,11 @@
 import os
 import random
+
+# Initialize logger
+from Logger import Logger
+Logger.initialize('main')
+LOGGER = Logger.get_logger()
+
 from LLMInterface import ALLAM_GENERATOR, FakeGenerator, load_env
 from ShatrGenerator import ShatrGenerator
 from Prompter import Prompter
@@ -22,33 +28,44 @@ def generate_qasida(prompt, shatr_generator, critic: CriticGen, wazn=None, qafiy
     qafiya = qafiya or infer_qafiya(prompt)
     length = length or infer_length(prompt)
     
+    LOGGER.info(f"Generating qasida with prompt: {prompt}, wazn: {wazn}, qafiya: {qafiya}, length: {length}")
+
     shatrs = []
     for i in range(length): #length = abyat
         feedback = [] #list of feedbacks for current bayt
         curr_bayt = []
-        for runs in range(2): #how many feedback runs to do? i'm thinking just one
+
+        LOGGER.info(f"Generating bayt {i+1} of {length}...")
+
+        RUNS = 2
+        for runs in range(RUNS): #how many feedback runs to do? i'm thinking just one
+            LOGGER.info(f"Generating shatrs in run {runs+1} of {RUNS}...")
             curr_bayt = []
             shatr, w, q, valid = shatr_generator.generate_shatr(prompt, wazn, (qafiya if i == 0 else None), feedback, shatrs)
             if wazn is None:
                 wazn = w
+
+            LOGGER.info(f"Shatr 1 generated: {shatr}")
             curr_bayt.append(shatr)
             
             shatr, w, q, valid2 = shatr_generator.generate_shatr(prompt, wazn, qafiya, feedback, shatrs + curr_bayt)
             if qafiya is None: #for 1st bayt, make sure qafiya matches. (Ma6la3 Qaseedah, qafiyah should be there in both shatrs)
                 qafiya = q
+            
+            LOGGER.info(f"Shatr 2 generated: {shatr}")
             curr_bayt.append(shatr)
             print(curr_bayt)
             #get feedback for this newest bayt
             hard_coded_feedback = []
             if (q != qafiya):
-                print("QAFIYA FEEDBACK")
+                LOGGER.warning(f"Qafiya feedback: {q} != {qafiya}")
                 hard_coded_feedback.append(critic.hardcoded_qafiya_feedback(qafiya))
             if not (valid and valid2): #wazn is still invalid, but ran out of iters
-                print("WAZN FEEDBACK")
+                LOGGER.warning("Wazn feedback: wazn is invalid")
                 hard_coded_feedback.append(critic.hard_coded_wazn_feedback(wazn))
 
             feedback.append(critic.critic(curr_bayt, shatrs, feedback, hard_coded_feedback))
-            print("FEEDBACK: "+feedback[-1]["feedback"])
+            LOGGER.info(f"Feedback: {feedback[-1]['feedback']}")
         shatrs.extend(curr_bayt) #get last attempt and store it
 
     
@@ -67,4 +84,5 @@ if __name__ == "__main__":
         if not prompt or prompt == "exit":
             break
         qasida = generate_qasida(prompt, shatr_generator, critic, length=1, wazn="الكامل", qafiya="لا")
-        print(qasida)
+        LOGGER.info("Qasida generated")
+        LOGGER.info(qasida)

@@ -97,6 +97,7 @@ class CriticGen:
 
 		feedback = {"bayt":bayt, "feedback":gen_}
 
+		LOGGER.info("Critic feedback: " + str(bayt) + " -> " + str(gen_))
 		return feedback
 
 

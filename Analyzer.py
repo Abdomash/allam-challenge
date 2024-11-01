@@ -15,6 +15,9 @@ from qawafi_server.utils import (
     BOHOUR_NAMES_AR,
 )
 
+from Logger import Logger
+LOGGER = Logger.get_logger()
+
 BOHOURS_USED = ["kamel", "baseet", "taweel", "wafer", "ramal", "rajaz", "mutakareb", "mujtath"]
 
 # Load the model once to avoid reloading it every time
@@ -97,22 +100,22 @@ class Analyzer:
             return None, None, None, 0, "", [0] #big error, return empty results, regen bayt
 
         #qafiya_type = output["qafiyah"]
-        print(output["diacritized"][-1])
+        LOGGER.debug(output["diacritized"][-1])
         wazn_name = output["meter"]
         aroodi_writing = output["arudi_style"][-1][0]
         combs = output["arudi_style"][-1][1]
-        print(aroodi_writing)
+        LOGGER.debug(aroodi_writing)
 
         aroodi_indices = output["arudi_indices"][-1]
 
         closest_comb, _, _, wazn_name = self.get_closest_bahr(combs, True, expected_wazn_name) #0101
-        print("ACTUAL:  " +combs)
-        print("CLOSEST: "+closest_comb)
-        print("indices: "+str(output["arudi_indices"][-1]))
+        LOGGER.debug("ACTUAL:  " +combs)
+        LOGGER.debug("CLOSEST: "+closest_comb)
+        LOGGER.debug("indices: "+str(output["arudi_indices"][-1]))
         #wazn_mismatch = find_mismatch(closest_comb, combs, False)
         wazn_mismatch = self.get_first_mistake2(combs, closest_comb)
 
-        print(wazn_mismatch)
+        LOGGER.debug(wazn_mismatch)
 
         #extract qafiyah from last 2 letters without diacritics
         diacritics = ['َ', 'ً', 'ُ', 'ٌ', 'ِ', 'ٍ', 'ْ', 'ّ']
