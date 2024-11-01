@@ -59,7 +59,7 @@ class Prompter:
             try: # get 5 abyat from the poet
                 abyat_examples = [next(self.poem) for _ in range(10)]
             except StopIteration:
-                print("self.poem is empty ")
+                LOGGER.error(f"Error in adding abyat examples to generation prompt. Poet {self.poet['name']} has no poems in {self.wazn}")
 
             if self.poet:
                 full_text += f"استخدم وزن بحر {self.wazn} لكتابة الأبيات. هذه أمثلة على أبيات شعرية كتبها الشاعر {self.poet['name']} على بحر {self.wazn}:\n"

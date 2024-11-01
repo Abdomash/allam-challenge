@@ -31,11 +31,11 @@ class Logger:
         :param socketio: The SocketIO instance to log to. If None, logging to Flask is disabled.
         """
         if Logger._instance is not None:
-            raise RuntimeError("Logger already initialized.")
+            Logger._instance.logger.warning("Logger already initialized.")
         
         self.logger = logging.getLogger(name)
         self.logger.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter('[%(asctime)s][%(levelname)s] - %(message)s', datefmt='%I:%M:%S %p')
 
         # Logging to console
         console_handler = logging.StreamHandler()
