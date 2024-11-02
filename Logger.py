@@ -56,9 +56,9 @@ class Logger:
             # Import FlaskIOHandler from the website folder
             website_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'website')
             sys.path.append(website_dir)
-            from FlaskLogger import FlaskIOHandler
+            from website import FlaskIOHandler
 
-            flask_handler = FlaskIOHandler(socketio)
+            flask_handler = FlaskIOHandler()
             flask_handler.setLevel(logging.DEBUG)
             flask_handler.setFormatter(formatter)
             self.logger.addHandler(flask_handler)

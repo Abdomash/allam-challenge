@@ -11,16 +11,29 @@
     rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <title>تحدث مع الشاعر علّام</title>
-</head>
-
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <script>
   function showSpinner() {
     document.getElementById("loading").style.display = "block";
   }
 </script>
+</head>
 
 <body>
   <h1>تحدث مع الشاعر علّام</h1>
+  <div id="logs"></div>
+
+  <script type="text/javascript">
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+      socket.on('log_message', function(data) {
+          var logsDiv = document.getElementById('logs');
+          var logMessage = document.createElement('p');
+          logMessage.textContent = data.message;
+          logsDiv.appendChild(logMessage);
+          console.log("Data received: ", data.message);
+      });
+  </script>
   <div class="chat-box">
       <h2>تاريخ الدردشة</h2>
     <div class="chat-log" id="chat-log">

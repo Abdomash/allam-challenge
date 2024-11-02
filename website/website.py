@@ -1,5 +1,6 @@
 import sys
 import os
+import logging
 
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_session import Session
@@ -12,6 +13,13 @@ app.config['SESSION_TYPE'] = 'filesystem'  # Use server-side session
 Session(app)
 socketio = SocketIO(app)
 
+class FlaskIOHandler(logging.Handler):
+    """Custom logging handler that sends log messages to a Flask SocketIO server."""
+    def __init__(self):
+        super().__init__()
+
+    def emit(self, record):
+        socketio.emit('log_message', { 'message' : self.format(record) })
 
 # Add reference to parent directory
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -84,4 +92,4 @@ def clear_chat():
     return redirect(url_for('chat'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)
