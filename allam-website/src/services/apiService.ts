@@ -1,4 +1,4 @@
-import { ApiResponse } from '../types'
+import { ApiResponse } from '../lib/types'
 
 export async function fetchDataFromApi(endpoint: string): Promise<ApiResponse> {
   const response = await fetch(endpoint)

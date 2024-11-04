@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchDataFromApi } from '../services/apiService'
-import { ApiResponse } from '../types'
+import { ApiResponse } from '../lib/types'
 import { saveData } from '../services/storageService'
 
 interface UseApiDataOptions {

@@ -1,4 +1,4 @@
-import { ApiResponse, Progress } from '../types'
+import { ApiResponse, Progress } from '../lib/types'
 
 const STORAGE_KEY = 'progressionData'
 
