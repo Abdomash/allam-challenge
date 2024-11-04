@@ -18,7 +18,8 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { useForm } from 'react-hook-form'
-import { ApiRequest, Bohours, Poets } from '@/lib/types'
+import { ApiRequest } from '@/lib/types'
+import { Bohours, Poets } from '@/lib/constants'
 
 export default function FloatingRequestGenerationForm() {
   const form = useForm<ApiRequest>({

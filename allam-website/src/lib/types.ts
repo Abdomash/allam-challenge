@@ -1,3 +1,5 @@
+import { Bohours, Poets } from './constants'
+
 export interface Progress {
   shatr_number: number
   iteration_number: number
@@ -11,31 +13,15 @@ export interface Progress {
 
 export interface ApiResponse {
   request_id: string
-  progression: Progress[]
+  data: Progress
 }
 
 export interface ApiRequest {
   prompt: string
   poet: Poet
-  bahr: Bahr | undefined
+  bahr: Bahr
   poetryMode: boolean
 }
-
-export const Poets: string[] = [
-  'علام',
-  'امرؤ القيس',
-  'أحمد شوقي',
-  'المتنبي',
-  'عنترة بن شداد',
-] as const
-
-export const Bohours: string[] = [
-  '--',
-  'الكامل',
-  'الطويل',
-  'البسيط',
-  'الوافر',
-] as const
 
 export type Poet = (typeof Poets)[number]
 export type Bahr = (typeof Bohours)[number]
