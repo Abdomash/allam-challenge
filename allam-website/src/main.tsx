@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { LandingPage } from './pages/LandingPage.tsx'
-import NotFoundPage from './NotFoundPage.tsx'
+import NotFoundPage from './pages/NotFoundPage.tsx'
 import './index.css'
 
 const router = createBrowserRouter([
