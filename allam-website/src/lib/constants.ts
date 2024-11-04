@@ -1,4 +1,4 @@
-export const WEBSOCKET_URL: string = 'wss://echo.websocket.org'
+export const WEBSOCKET_URL: string = 'ws://localhost:8080'
 
 export const Poets: string[] = [
   'علام',

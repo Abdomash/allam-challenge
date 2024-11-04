@@ -20,8 +20,11 @@ import {
 import { useForm } from 'react-hook-form'
 import { ApiRequest } from '@/lib/types'
 import { Bohours, Poets } from '@/lib/constants'
+import { generateRandomId } from '@/lib/utils'
+import { useDataContext } from '@/hooks/useDataContext'
 
 export default function FloatingRequestGenerationForm() {
+  const dataContext = useDataContext()
   const form = useForm<ApiRequest>({
     defaultValues: {
       prompt: '',
@@ -32,15 +35,11 @@ export default function FloatingRequestGenerationForm() {
   })
 
   const onSubmit = async (data: ApiRequest) => {
-    await new Promise<void>((resolve) =>
-      setTimeout(() => {
-        resolve()
-        form.reset()
-        console.log('Form data:', data)
-      }, 3000),
-    )
-
-    // TODO: Implement form submission
+    dataContext.sendMessage({
+      type: 'start_request',
+      form_request_id: generateRandomId(),
+      formData: data,
+    })
   }
 
   return (
