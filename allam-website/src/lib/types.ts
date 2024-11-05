@@ -1,5 +1,10 @@
 import { Bohours, Poets } from './constants'
 
+export interface DataEntry {
+  prompt: string
+  responses: Progress[]
+}
+
 export interface Progress {
   shatr_number: number
   iteration_number: number

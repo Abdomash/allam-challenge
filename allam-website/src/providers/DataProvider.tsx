@@ -1,26 +1,49 @@
 import { DataContext } from '@/contexts/DataContext'
 import { WEBSOCKET_URL } from '@/lib/constants'
-import { ApiRequest, ApiResponse, Progress } from '@/lib/types'
+import { ApiRequest, ApiResponse, DataEntry, Progress } from '@/lib/types'
 import { useReducer, useEffect, useRef, PropsWithChildren } from 'react'
 
 export interface DataState {
-  dataById: { [key: string]: Progress[] }
+  dataById: { [key: string]: DataEntry }
 }
 
 export type DataAction =
+  | {
+      type: 'START_REQUEST'
+      payload: { form_request_id: string; prompt: string }
+    }
   | { type: 'ADD_DATA'; payload: { form_request_id: string; data: Progress } }
   | { type: 'END_REQUEST'; payload: { form_request_id: string } }
 
 function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
-    case 'ADD_DATA': {
-      const { form_request_id, data } = action.payload
+    case 'START_REQUEST': {
+      const { form_request_id, prompt } = action.payload
       return {
         ...state,
         dataById: {
           ...state.dataById,
-          [form_request_id]: [...(state.dataById[form_request_id] || []), data],
+          [form_request_id]: { prompt, responses: [] },
         },
+      }
+    }
+    case 'ADD_DATA': {
+      const { form_request_id: id, data } = action.payload
+      const existingEntry = state.dataById[id]
+      if (existingEntry) {
+        return {
+          ...state,
+          dataById: {
+            ...state.dataById,
+            [id]: {
+              ...existingEntry,
+              responses: [...existingEntry.responses, data],
+            },
+          },
+        }
+      } else {
+        // Handle the case where START_REQUEST was not dispatched
+        return state
       }
     }
     case 'END_REQUEST':
@@ -92,6 +115,14 @@ export function DataProvider({ children }: PropsWithChildren) {
   }, [state.dataById])
 
   const sendMessage = (message: StartRequestMessage) => {
+    dispatch({
+      type: 'START_REQUEST',
+      payload: {
+        form_request_id: message.form_request_id,
+        prompt: message.formData.prompt,
+      },
+    })
+
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(message))
     } else {
