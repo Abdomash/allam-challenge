@@ -20,10 +20,16 @@ import {
 import { useForm } from 'react-hook-form'
 import { ApiRequest } from '@/lib/types'
 import { Bohours, Poets } from '@/lib/constants'
-import { generateRandomId } from '@/lib/utils'
+import { cn, generateRandomId } from '@/lib/utils'
 import { useDataContext } from '@/hooks/useDataContext'
 
-export default function FloatingRequestGenerationForm() {
+interface RequestGenerationFormProps {
+  className?: string
+}
+
+export default function RequestGenerationForm({
+  className,
+}: RequestGenerationFormProps) {
   const dataContext = useDataContext()
   const form = useForm<ApiRequest>({
     defaultValues: {
@@ -40,10 +46,17 @@ export default function FloatingRequestGenerationForm() {
       form_request_id: generateRandomId(),
       formData: data,
     })
+
+    form.reset()
   }
 
   return (
-    <div className="size-fit overflow-hidden rounded-lg bg-card shadow-lg md:max-w-3xl">
+    <div
+      className={cn(
+        'size-fit overflow-hidden rounded-lg bg-card shadow-lg md:max-w-3xl',
+        className,
+      )}
+    >
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

@@ -1,31 +1,27 @@
 import { useDataContext } from '@/hooks/useDataContext'
-import React from 'react'
+import UserMessage from './UserMessage'
+import LLMResponse from './LLMResponse'
+import { cn } from '@/lib/utils'
 
-const ChatView: React.FC = () => {
+interface ChatViewProps {
+  className?: string
+}
+
+export default function ChatView({ className }: ChatViewProps) {
   const dataContext = useDataContext()
   const { dataById } = dataContext.state
 
   return (
-    <div>
-      {Object.keys(dataById).map((form_request_id) => (
-        <div key={form_request_id}>
-          <h3>Request ID: {form_request_id}</h3>
-          {dataById[form_request_id].map((progress, index) => (
-            <div key={index}>
-              <p>Attempt Text: {progress.attempt_text}</p>
-              <p>Shatr Number: {progress.shatr_number}</p>
-              <p>Iteration Number: {progress.iteration_number}</p>
-              <p>Aroodi Style: {progress.aroodi_style}</p>
-              <p>Wazn Comb: {progress.wazn_comb}</p>
-              <p>Wazn Mismatch: {progress.wazn_mismatch}</p>
-              <p>Cut Attempt Text: {progress.cut_attempt_text}</p>
-              <p>Is Last Attempt: {progress.is_last_attempt ? 'Yes' : 'No'}</p>
-            </div>
-          ))}
+    <div
+      className={cn('w-full md:max-w-3xl flex flex-col gap-4 p-4 ', className)}
+    >
+      <h2 className="text-center text-2xl font-bold">تاريخ المحادثة</h2>
+      {Object.values(dataById).map(({ prompt, responses }) => (
+        <div className="flex w-full flex-col gap-2">
+          <UserMessage className="ml-auto" message={prompt} />
+          <LLMResponse className="mr-auto" responses={responses} />
         </div>
       ))}
     </div>
   )
 }
-
-export default ChatView
