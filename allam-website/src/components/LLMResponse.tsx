@@ -1,57 +1,39 @@
-import { Progress } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { Skeleton } from './ui/skeleton'
 import CyclingText from './CyclingText'
+import { LoadingResponseTextAnimated } from '@/lib/constants'
+import { ApiAnalyzeResponse, ApiGenerateResponse } from '@/lib/types'
+import GenerateResponse from './GenerateResponse'
+import AnalyzeResponse from './AnalyzeResponse'
 
-interface LLMResponseProps {
-  responses: Progress[]
-  className?: string
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function LoadingResponse({ className }: { className?: string }) {
+  return (
+    <div className={cn('flex flex-col gap-2 items-end', className)}>
+      <CyclingText
+        className="pl-4"
+        strings={LoadingResponseTextAnimated}
+        interval={3000}
+      />
+      <Skeleton className="grid h-28 w-72 grid-cols-2 gap-4 rounded-md bg-secondary p-4">
+        {Array.from(Array(6).keys()).map(() => (
+          <Skeleton className="h-4 w-full rounded-md bg-gray-400" />
+        ))}
+      </Skeleton>
+    </div>
+  )
 }
 
-const LoadingResponseTextAnimated: string[] = [
-  'أفهم كلمات المستخدم',
-  'أحدد الفكرة الرئيسية',
-  'أنتج الكلمات المناسبة',
-  'أبني البيت التالي',
-  'أحلل وزن البيت',
-  'أعد ضبط الإيقاع',
-  'أقنن الكلمات لتتناسب مع الوزن',
-  'أختار الصور الشعرية بعناية',
-  'أعيد صياغة البيت ليصبح أكمل',
-  'أراجع التراكيب اللغوية',
-  'أصقل الكلمات لتصبح أكثر قوة',
-]
+interface LLMResponseProps {
+  className?: string
+  response: ApiGenerateResponse | ApiAnalyzeResponse
+}
 
-export default function LLMResponse({
-  responses,
-  className,
-}: LLMResponseProps) {
+export default function LLMResponse({ response, className }: LLMResponseProps) {
   return (
     <div className={cn('text-sm text-muted-foreground', className)}>
-      {responses.map((response, i) => (
-        <div key={i} className="flex flex-col gap-2">
-          <p>{response.attempt_text}</p>
-          <p>{response.aroodi_style}</p>
-          <p>{response.wazn_comb}</p>
-          <p>{response.wazn_mismatch}</p>
-          <p>{response.cut_attempt_text}</p>
-          <p>{response.is_last_attempt}</p>
-        </div>
-      ))}
-      {responses.length === 0 && (
-        <div className={cn('flex flex-col gap-2 items-end', className)}>
-          <CyclingText
-            className="pl-4"
-            strings={LoadingResponseTextAnimated}
-            interval={3000}
-          />
-          <Skeleton className="grid h-28 w-72 grid-cols-2 gap-4 rounded-md bg-secondary p-4">
-            {Array.from(Array(6).keys()).map(() => (
-              <Skeleton className="h-4 w-full rounded-md bg-gray-400" />
-            ))}
-          </Skeleton>
-        </div>
-      )}
+      {response.type === 'analyze' && <AnalyzeResponse response={response} />}
+      {response.type === 'generate' && <GenerateResponse response={response} />}
     </div>
   )
 }

@@ -1,31 +1,46 @@
 import { Bohours, Poets } from './constants'
 
+export type ResponseType = 'generate' | 'analyze'
+
 export interface DataEntry {
-  prompt: string
-  responses: Progress[]
+  type: ResponseType
+  request: ApiGenerateRequest | ApiAnalyzeRequest
+  response: ApiGenerateResponse | ApiAnalyzeResponse
 }
 
-export interface Progress {
-  shatr_number: number
+export type Attempt = {
+  shatr_idx: number
   iteration_number: number
   attempt_text: string
   aroodi_style: string
   wazn_comb: string
   wazn_mismatch: string
   cut_attempt_text: string
-  is_last_attempt: boolean
 }
 
-export interface ApiResponse {
-  request_id: string
-  data: Progress
+export type ApiGenerateResponse = {
+  type: 'generate'
+  attempts: Attempt[]
 }
 
-export interface ApiRequest {
+export type ApiGenerateRequest = {
+  type: 'generate'
   prompt: string
   poet: Poet
   bahr: Bahr
   poetryMode: boolean
+}
+
+export type ApiAnalyzeRequest = {
+  type: 'analyze'
+  baits: string[]
+}
+
+export type ApiAnalyzeResponse = {
+  type: 'analyze'
+  feedback: string
+  wazn_comb: string
+  wazn_mismatch: string
 }
 
 export type Poet = (typeof Poets)[number]

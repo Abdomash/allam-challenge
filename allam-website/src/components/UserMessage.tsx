@@ -1,19 +1,41 @@
+import { ApiAnalyzeRequest, ApiGenerateRequest } from '@/lib/types'
 import { cn } from '@/lib/utils'
+
+function RegularMessage({ text }: { text: string }) {
+  return <p>{text}</p>
+}
+
+function BaitsMessage({ baits }: { baits: string[] }) {
+  return (
+    <div>
+      {baits.map((bait, i) => (
+        <>
+          <p key={i}>{bait}</p>
+          <br />
+        </>
+      ))}
+    </div>
+  )
+}
 
 export interface UserMessageProps {
   className?: string
-  message: string
+  request: ApiAnalyzeRequest | ApiGenerateRequest
 }
 
-export default function UserMessage({ className, message }: UserMessageProps) {
+export default function UserMessage({ className, request }: UserMessageProps) {
   return (
-    <p
+    <div
       className={cn(
         'text-sm bg-primary p-2 rounded-md justify-start',
         className,
       )}
-    >
-      {message}
-    </p>
+      {...(request.type === 'generate' && (
+        <RegularMessage text={request.prompt} />
+      ))}
+      {...(request.type === 'analyze' && (
+        <BaitsMessage baits={request.baits} />
+      ))}
+    ></div>
   )
 }
