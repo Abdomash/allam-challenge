@@ -26,14 +26,19 @@ function LoadingResponse({ className }: { className?: string }) {
 
 interface LLMResponseProps {
   className?: string
-  response: ApiGenerateResponse | ApiAnalyzeResponse
+  response: ApiGenerateResponse | ApiAnalyzeResponse | undefined
 }
 
 export default function LLMResponse({ response, className }: LLMResponseProps) {
   return (
-    <div className={cn('text-sm text-muted-foreground', className)}>
-      {response.type === 'analyze' && <AnalyzeResponse response={response} />}
-      {response.type === 'generate' && <GenerateResponse response={response} />}
+    <div className={cn(className)}>
+      {response === undefined && <LoadingResponse />}
+      {response && response.type === 'analyze' && (
+        <AnalyzeResponse response={response} />
+      )}
+      {response && response.type === 'generate' && (
+        <GenerateResponse response={response} />
+      )}
     </div>
   )
 }

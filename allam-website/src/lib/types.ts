@@ -1,11 +1,11 @@
 import { Bohours, Poets } from './constants'
 
-export type ResponseType = 'generate' | 'analyze'
+export type ResponseType = 'generate' | 'analyze' | 'error'
 
-export interface DataEntry {
+export interface ChatEntry {
   type: ResponseType
   request: ApiGenerateRequest | ApiAnalyzeRequest
-  response: ApiGenerateResponse | ApiAnalyzeResponse
+  response: ApiGenerateResponse | ApiAnalyzeResponse | undefined
 }
 
 export type Attempt = {
@@ -14,7 +14,7 @@ export type Attempt = {
   attempt_text: string
   aroodi_style: string
   wazn_comb: string
-  wazn_mismatch: string
+  wazn_mismatch: number
   cut_attempt_text: string
 }
 

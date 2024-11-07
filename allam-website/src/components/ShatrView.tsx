@@ -33,7 +33,7 @@ export default function ShatrView({ attempts }: ShatrViewProps) {
               <DropdownMenuItem>
                 <ColorizedText
                   text={attempt.attempt_text}
-                  colormap={attempt.wazn_mismatch}
+                  mistakeIndex={attempt.wazn_mismatch}
                 />
               </DropdownMenuItem>
               <DropdownMenuSeparator />

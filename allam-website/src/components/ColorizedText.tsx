@@ -1,28 +1,29 @@
 export interface ColorizedTextProps {
   text: string
-  colormap: string
+  mistakeIndex: number
 }
 
-export default function ColorizedText({ text, colormap }: ColorizedTextProps) {
-  if (colormap.length === text.length) {
-    console.error('Color map length must match text length')
-    return <p>{text}</p>
+export default function ColorizedText({
+  text,
+  mistakeIndex,
+}: ColorizedTextProps) {
+  if (mistakeIndex < 0 || mistakeIndex >= text.length) {
+    return <div>{text}</div>
   }
 
-  const color_dictionary = {
-    R: 'text-green-500',
-    G: 'text-blue-500',
-    B: 'text-red-500',
+  const index_to_color = (idx: number) => {
+    if (Math.abs(idx - mistakeIndex) <= 1) {
+      return 'text-red-500'
+    } else {
+      return 'text-green-500'
+    }
   }
 
   return (
     <div>
       {text.split('').map((char, i) => {
         return (
-          <span
-            key={i}
-            className={color_dictionary[colormap[i] as 'R' | 'G' | 'B']}
-          >
+          <span key={i} className={index_to_color(i)}>
             {char}
           </span>
         )
