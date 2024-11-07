@@ -30,7 +30,7 @@ class ShatrGenerator:
         last_mistake = -1 #use it to track if model is stuck
         last_repeats = -1 #if it is stuck, restart generation / increase temp
 
-        while not valid and iters < 10:
+        while not valid and iters < 5:
             print(f"Temp: {temp}")
             iters += 1
             # Generate a shatr

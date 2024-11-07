@@ -118,5 +118,5 @@ class FakeGenerator:
         # cycle through the poem lines infinitely
         self.poem = itertools.cycle(random.choice(self.poems))
 
-    def generate(self, prompt=None, is_critic=False):
+    def generate(self, prompt=None, is_critic=False, temp=0.5):
         return next(self.poem)

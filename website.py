@@ -33,6 +33,7 @@ def generate():
     user_input = request.form['prompt']
     selected_bahr = request.form['bahr']
     selected_poet = request.form['poet']
+    prompter.update(None, selected_poet, selected_bahr)
     len_ = 3
 
     output = generate_qasida(user_input, shatr_generator, critic, selected_bahr, None, len_ )
@@ -72,5 +73,13 @@ def analyze():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
 
+    c = app.test_client()
+    resp = c.get('/generate', data={
+        "type":"generate",
+        "prompt":"اكتب قصيدة عن الوطن",
+        "bahr":"الكامل",
+        "poet":"المتنبي",
+    })
+    print(resp.data.decode())
