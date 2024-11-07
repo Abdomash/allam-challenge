@@ -61,5 +61,5 @@ class JSONizer:
 		JSONizer.analysis_res.clear()
 
 if __name__ == "__main__":
-	JSONizer.attempt(32, 2, "hi", "hiii", "101011", "GGRRR", "h")
+	#JSONizer.attempt(32, 2, "hi", "hiii", "101011", "GGRRR")
 	print(JSONizer.getGenResponse())

@@ -42,15 +42,17 @@ def generate():
 @app.route('/analyze', methods=['GET'])
 def analyze():
     JSONizer.resetAnalyzerResponse()
-    shatrs = request.form['shatrs']
+    shatrs = json.loads(request.form['shatrs'])
+
+    print(shatrs)
 
     abyat = format_abyat(shatrs)
 
     expected_wazn = None
 
-    for b in range(len(abyat)): #for each bayt
-        prev_shatrs = abyat[:b]
-        s_ = shatrs[b*2: (b+1)*2]
+    for b in range(0, len(shatrs), 2): #for each bayt
+        prev_shatrs = shatrs[:b]
+        s_ = shatrs[b: b+2]
 
         #TODO: move this to critic full
 
@@ -64,7 +66,7 @@ def analyze():
 
         #TODO Hardcoded Qafiya + Wazn feedbacks!
 
-        feedback = critic.critic(abyat[b], prev_shatrs, None, hardcoded_feedback)
+        feedback = critic.critic(s_, prev_shatrs, None, hardcoded_feedback)
 
         JSONizer.analysis(diacritized1, new_wazn_combs1, new_wazn_mismatch1, feedback["feedback"])
         JSONizer.analysis(diacritized2, new_wazn_combs2, new_wazn_mismatch2, feedback["feedback"])
@@ -73,13 +75,24 @@ def analyze():
 
 
 if __name__ == '__main__':
+    app.testing = True
     #app.run(debug=True)
 
     c = app.test_client()
-    resp = c.get('/generate', data={
-        "type":"generate",
-        "prompt":"اكتب قصيدة عن الوطن",
-        "bahr":"الكامل",
-        "poet":"المتنبي",
+    #resp = c.get('/generate', data={
+    #    "type":"generate",
+    #    "prompt":"اكتب قصيدة عن الوطن",
+    #    "bahr":"الكامل",
+    #    "poet":"المتنبي",
+    #})
+    #print(resp.data.decode())
+
+
+    print("---------")
+    resp = c.get('/analyze', data={
+        "type":"analyze",
+        "shatrs":json.dumps([
+            'حييت يا وطني الحبيب تحيةً', 'ﻓنـحيب قلبي والضلوع تحومل','يَا سَامِعِي أَصْوَاتِ أَبْيَاتِي الْغَرَّ', 'يَامَنْ بِلُبّي تُعَدُّوْنَ وَتُسْتَهَلْ'
+            ])
     })
     print(resp.data.decode())
