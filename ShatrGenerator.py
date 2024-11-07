@@ -1,3 +1,4 @@
+from JSONizer import JSONizer
 from Analyzer import Analyzer
 from Prompter import Prompter
 
