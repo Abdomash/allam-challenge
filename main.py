@@ -4,6 +4,7 @@ from LLMInterface import ALLAM_GENERATOR, FakeGenerator, load_env
 from ShatrGenerator import ShatrGenerator
 from Prompter import Prompter
 from Critic import CriticGen
+from JSONizer import *
 
 load_env(".env")
 
@@ -32,8 +33,9 @@ def generate_qasida(prompt, shatr_generator, critic: CriticGen, wazn=None, qafiy
             if wazn is None:
                 wazn = w
             curr_bayt.append(shatr)
-            
+            JSONizer.nextShatr()
             shatr, w, q, valid2 = shatr_generator.generate_shatr(prompt, wazn, qafiya, feedback, shatrs + curr_bayt)
+            JSONizer.nextShatr()
             if qafiya is None: #for 1st bayt, make sure qafiya matches. (Ma6la3 Qaseedah, qafiyah should be there in both shatrs)
                 qafiya = q
             curr_bayt.append(shatr)

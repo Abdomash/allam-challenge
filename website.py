@@ -55,15 +55,19 @@ def analyze():
         #TODO: move this to critic full
 
         #copied from generate_qasida
-        _, new_wazn_name, new_wazn_combs, new_wazn_mismatch, diacritized, arudi_indices = analyzer.extract(s_[0], expected_wazn_name=expected_wazn)
-        expected_wazn = new_wazn_name
-        JSONizer.analysis(diacritized, new_wazn_combs, new_wazn_mismatch)
+        _, new_wazn_name1, new_wazn_combs1, new_wazn_mismatch1, diacritized1, arudi_indices1 = analyzer.extract(s_[0], expected_wazn_name=expected_wazn)
+        expected_wazn = new_wazn_name1
+
+        new_qafiya, new_wazn_name2, new_wazn_combs2, new_wazn_mismatch2, diacritized2, arudi_indices2 = analyzer.extract(s_[1], expected_wazn_name=expected_wazn)
 
         hardcoded_feedback = ""
 
-        
+        #TODO Hardcoded Qafiya + Wazn feedbacks!
 
-        critic.critic(abyat[b], prev_shatrs, None, hardcoded_feedback)
+        feedback = critic.critic(abyat[b], prev_shatrs, None, hardcoded_feedback)
+
+        JSONizer.analysis(diacritized1, new_wazn_combs1, new_wazn_mismatch1, feedback["feedback"])
+        JSONizer.analysis(diacritized2, new_wazn_combs2, new_wazn_mismatch2, feedback["feedback"])
 
     return JSONizer.getAnalyzerResponse()
 

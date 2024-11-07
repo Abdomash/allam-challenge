@@ -70,8 +70,10 @@ class ShatrGenerator:
 
                 new_shatr = self.cut_to_last_valid_word(diacritized, index_to_delete) #harakat means length of diacritized is double!
                 print(f"cut shatr: {new_shatr}")
+                JSONizer.attempt(diacritized, "aroodi", new_wazn_combs, new_wazn_mismatch, new_shatr)
                 continue # Loop back to regenerate
             
+            JSONizer.attempt(diacritized, "aroodi", new_wazn_combs, new_wazn_mismatch, "") #no mistake?
             valid = True
         
         print(f"wazn: {new_wazn_name}, qafiya: {qafiya}")

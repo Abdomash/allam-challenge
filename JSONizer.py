@@ -3,16 +3,23 @@ import json
 class JSONizer:
 	attempts = []
 	analysis_res = []
+	curr_shatr_num = 0
+	iter_nums = {} #dictionary of int->int
 	@staticmethod
-	def attempt(shatr_num, iter_num, attempt_txt, aroodi_style, wazn_10, wazn_mismatch, cut_attempt):
-		d = {"shatr_idx":shatr_num,
-	   "iteration_number":iter_num,
+	def attempt(attempt_txt, aroodi_style, wazn_10, wazn_mismatch, cut_attempt):
+		JSONizer.iter_nums[JSONizer.curr_shatr_num] += 1
+		d = {"shatr_idx":JSONizer.curr_shatr_num,
+	   "iteration_number":JSONizer.iter_nums[JSONizer.curr_shatr_num],
 	   "attempt_text":attempt_txt,
 	   "aroodi_style":aroodi_style,
 	   "wazn_comb":wazn_10,
 	   "wazn_mismatch":wazn_mismatch,
 	   "cut_attempt_text":cut_attempt}
 		JSONizer.attempts.append(d)
+	
+	@staticmethod
+	def nextShatr():
+		JSONizer.curr_shatr_num += 1
 
 	@staticmethod
 	def getGenResponse():
@@ -25,13 +32,16 @@ class JSONizer:
 	@staticmethod
 	def resetGenResponse():
 		JSONizer.attempts.clear()
+		JSONizer.curr_shatr_num = 0
+		JSONizer.iter_nums.clear() #dictionary of int->int
 	
 	@staticmethod
-	def analysis(shatr, wazn_10, wazn_mismatch):
+	def analysis(shatr, wazn_10, wazn_mismatch, feedback):
 		d = {
 			"shatr_text":shatr,
 			"wazn_comb":wazn_10,
 			"wazn_mismatch":wazn_mismatch,
+			"feedback":feedback
 		}
 		JSONizer.analysis_res.append(d)
 	
