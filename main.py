@@ -18,23 +18,27 @@ def infer_qafiya(prompt):
 def infer_length(prompt):
     return 2
 
-def generate_qasida(prompt, shatr_generator, critic: CriticGen, wazn=None, qafiya=None, length=None):
+def generate_qasida(prompt, shatr_generator: ShatrGenerator, critic: CriticGen, wazn=None, qafiya=None, length=None):
     wazn = wazn or infer_wazn(prompt)
     qafiya = qafiya or infer_qafiya(prompt)
     length = length or infer_length(prompt)
     
     shatrs = []
     for i in range(length): #length = abyat
+        #plan bait
+
+        plan_txt = llm.generate(shatr_generator.prompter.wrap_gen(prompt, shatrs, None, None, plan=1, ), is_critic=True)
+
         feedback = [] #list of feedbacks for current bayt
         curr_bayt = []
         for runs in range(2): #how many feedback runs to do? i'm thinking just one
             curr_bayt = []
-            shatr, w, q, valid = shatr_generator.generate_shatr(prompt, wazn, (qafiya if i == 0 else None), feedback, shatrs)
+            shatr, w, q, valid = shatr_generator.generate_shatr(prompt, wazn, (qafiya if i == 0 else None), feedback, shatrs, plan_txt)
             if wazn is None:
                 wazn = w
             curr_bayt.append(shatr)
             JSONizer.nextShatr()
-            shatr, w, q, valid2 = shatr_generator.generate_shatr(prompt, wazn, qafiya, feedback, shatrs + curr_bayt)
+            shatr, w, q, valid2 = shatr_generator.generate_shatr(prompt, wazn, qafiya, feedback, shatrs + curr_bayt, plan_txt)
             JSONizer.nextShatr()
             if qafiya is None: #for 1st bayt, make sure qafiya matches. (Ma6la3 Qaseedah, qafiyah should be there in both shatrs)
                 qafiya = q

@@ -17,7 +17,7 @@ class ShatrGenerator:
         self.analyzer = analyzer or Analyzer()
     
     #no qafiya validation here. Will do in larger loop, where we compare it to 
-    def generate_shatr(self, prompt, wazn=None, qafiya=None, feedback=None, previous_shatrs=None): #generates a shatr with the correct wazn. Doesn't account for feedback here.
+    def generate_shatr(self, prompt, wazn=None, qafiya=None, feedback=None, previous_shatrs=None, plan_txt=""): #generates a shatr with the correct wazn. Doesn't account for feedback here.
         valid = False
         shatr = ""
         iters = 0
@@ -30,12 +30,14 @@ class ShatrGenerator:
         last_mistake = -1 #use it to track if model is stuck
         last_repeats = -1 #if it is stuck, restart generation / increase temp
 
+        plan = 2 if plan_txt else 0
+
         while not valid and iters < 5:
             print(f"Temp: {temp}")
             iters += 1
             # Generate a shatr
             shatr = new_shatr
-            shatr += self.llm.generate(self.prompter.wrap_gen(prompt, previous_shatrs, feedback, shatr), temp=temp)
+            shatr += self.llm.generate(self.prompter.wrap_gen(prompt, previous_shatrs, feedback, shatr, plan, plan_txt), temp=temp)
             shatr = clean_bayt(shatr)
             print("----------------------")
             print(f"attempt {iters}: {shatr}")
