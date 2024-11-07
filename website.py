@@ -35,8 +35,7 @@ def generate():
     selected_poet = request.form['poet']
     len_ = 3
 
-    prompt = ""
-    output = generate_qasida(prompt, shatr_generator, critic, selected_bahr, None, len_ )
+    output = generate_qasida(user_input, shatr_generator, critic, selected_bahr, None, len_ )
     return JSONizer.getGenResponse()
 
 @app.route('/analyze', methods=['GET'])
