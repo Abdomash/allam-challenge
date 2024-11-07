@@ -46,10 +46,24 @@ def analyze():
 
     abyat = format_abyat(shatrs)
 
-    for b in range(len(abyat)):
-        prev_shatrs = abyat[:b]
+    expected_wazn = None
 
-        critic.critic(abyat[b], prev_shatrs, None, TODO)
+    for b in range(len(abyat)): #for each bayt
+        prev_shatrs = abyat[:b]
+        s_ = shatrs[b*2: (b+1)*2]
+
+        #TODO: move this to critic full
+
+        #copied from generate_qasida
+        _, new_wazn_name, new_wazn_combs, new_wazn_mismatch, diacritized, arudi_indices = analyzer.extract(s_[0], expected_wazn_name=expected_wazn)
+        expected_wazn = new_wazn_name
+        JSONizer.analysis(diacritized, new_wazn_combs, new_wazn_mismatch)
+
+        hardcoded_feedback = ""
+
+        
+
+        critic.critic(abyat[b], prev_shatrs, None, hardcoded_feedback)
 
     return JSONizer.getAnalyzerResponse()
 
