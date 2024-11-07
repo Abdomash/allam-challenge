@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
+import ColorizedText from './ColorizedText'
 
 export interface ShatrViewProps {
   attempts: Attempt[]
@@ -27,8 +28,14 @@ export default function ShatrView({ attempts }: ShatrViewProps) {
         <DropdownMenuContent className="w-max">
           {attempts.map((attempt) => (
             <>
-              <DropdownMenuItem>{attempt.attempt_text}</DropdownMenuItem>
-              <DropdownMenuItem>{attempt.cut_attempt_text}</DropdownMenuItem>
+              {/* <DropdownMenuItem>{attempt.attempt_text}</DropdownMenuItem>
+              <DropdownMenuItem>{attempt.cut_attempt_text}</DropdownMenuItem> */}
+              <DropdownMenuItem>
+                <ColorizedText
+                  text={attempt.attempt_text}
+                  colormap={attempt.wazn_mismatch}
+                />
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
             </>
           ))}

@@ -28,19 +28,23 @@ export type ApiGenerateRequest = {
   prompt: string
   poet: Poet
   bahr: Bahr
-  poetryMode: boolean
 }
 
 export type ApiAnalyzeRequest = {
   type: 'analyze'
-  baits: string[]
+  shatrs: string[]
+}
+
+export type AnalyzedShatr = {
+  feedback: string
+  shatr_text: string
+  wazn_comb: string
+  wazn_mismatch: string
 }
 
 export type ApiAnalyzeResponse = {
   type: 'analyze'
-  feedback: string
-  wazn_comb: string
-  wazn_mismatch: string
+  analyzed_shatrs: AnalyzedShatr[]
 }
 
 export type Poet = (typeof Poets)[number]
