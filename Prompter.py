@@ -34,21 +34,19 @@ class Prompter:
 
         self.update(qafiya, poet, wazn)
     
-    def wrap_gen(self, prompt, previous_shatrs=None, feedback=None, current_attempt=None, multi_gen=False):
+    #plan = 0, 1, 2 (0 = default, 1 = write me an idea for this bait, 2 = write new bait from this idea)
+    def wrap_gen(self, prompt, previous_shatrs=None, feedback=None, current_attempt=None, plan=0, plan_txt=""):
         full_text = "<s> [INST]<<SYS>>\n"
         if self.poet:
             full_text += f"{self.poet['description']}\n"
 
         full_text += "\n<</SYS>>\n" #end of system prompt
         
-        if multi_gen:
-            full_text += "أكمل القصيدة التالية بكتابة ١٠ خيارات لنصف بيتٍ شعري (شطر بيت)، ليختار المستخدم الشطر الأنسب ليتمم به القصيدة ويضيف إليه شطراً آخر. تأكد أن المحاولات تتفق مع سياق القصيدة وأنها ذو جزالة وجميلة الموسيقى والشعر. تأكد أن المحاولات كلها ممكن أن تكمل القصيدة. تأكد من كتابة شطر واحد فقط في كل محاولة، وأن تكتب كل محاولة في سطر." + "\n"
-        else:
-            #full_text += "اكتب شطر واحد لجزء من قصيدة.\n"
-            full_text += "اكتب لي قصيدة جديدة وفريدة من نوعها، على نمط الشعر العامودي العربي في أوزانه وكلماته ونغمه ومعانيه. أريد القصيدة أن تكون ذو معانٍ حسنة وقوية وكلمات مؤثرة. "
-            if prompt:
-                full_text += prompt #add user prompt here too
-            full_text += "\n"
+        #full_text += "اكتب شطر واحد لجزء من قصيدة.\n"
+        full_text += "اكتب لي قصيدة جديدة وفريدة من نوعها، على نمط الشعر العامودي العربي في أوزانه وكلماته ونغمه ومعانيه. أريد القصيدة أن تكون ذو معانٍ حسنة وقوية وكلمات مؤثرة. "
+        if prompt:
+            full_text += prompt #add user prompt here too
+        full_text += "\n"
         
         if self.wazn: #add wazn name and example bohour
             abyat_examples = [next(self.poem) for i in range(10)] #5 abyat every call
@@ -68,11 +66,6 @@ class Prompter:
         if self.qafiya:
             full_text += f"اكتب قصيدتك على قافية '{self.qafiya}'، اي تأكد أن آخر كلمة في كل بيت تنتهي بهذه القافية '{self.qafiya}'.\n"
         
-        if multi_gen:
-            full_text += "إبدأ بكتابة التكملات بحيث تكتب في كل سطر بيت ممكن أن يكمل القصيدة. \n"
-            if current_attempt: 
-                full_text += f"أيضاً تأكد أن كل المحاولات تبدأ بعبارة ({current_attempt}).\n" 
-
         if self.qafiya_examples:
             full_text += f"هنا بعض الامثلة لكلمات تنتهي بقافية '{self.qafiya}'. يمكنك استعمال اي واحدة منها لاتمام الأبيات او استعمل كلمات مشابهة لها: "
             full_text += "\n"
@@ -84,12 +77,6 @@ class Prompter:
         #add user prompt here
         if prompt:
             full_text += f"{prompt}\n"
-
-        if multi_gen: # FIXME: `previous_shatrs` could be None here, make sure to handle that
-            if current_attempt:
-                full_text += f"هذه الأبيات كلها تبدأ بعبارة ({current_attempt}) ومن الممكن أن تأتي بعد البيت الأخير ({previous_shatrs[-1]}) ويمكنك استعمال أي واحدة منهن:<s>\n1)"
-            else:
-                full_text += f"هذه الأبيات كلها من الممكن أن تأتي بعد البيت الأخير ({previous_shatrs[-1]}) ويمكنك استعمال أي واحدة منهن:<s>\n1) "
 
         full_text += "[/INST] \n"
 
@@ -104,6 +91,15 @@ class Prompter:
                 full_text += format_abyat(previous_shatrs[:-1]) #last shatr is part of the new attempt. Include it below
                 current_attempt = format_abyat([previous_shatrs[-1]]) + current_attempt
             #full_text += '\n'
+
+        if plan == 1: #add instruction for plan the idea of the line, dont write it in meter form yet.
+            full_text += '</s><s> [INST] '
+            full_text += "أريد كتابة بيت آخر يكمل القصيدة. أعطني فكرة جيدة للبيت. "
+            full_text += "[/INST]\n"
+        elif plan == 2: #write bait using this plan. Add an instruction after all prev shatrs to get new gen
+            full_text += '</s><s> [INST] '
+            full_text += "أريدك ان تكتب بيتا آخر ليكمل القصيدة. أريد البيت أن يكون عن هذه الفكرة: "
+            full_text += plan_txt
         
         if feedback: #feedback: list of {"bayt":[s0,s1], "feedback":"str"}
             for f in feedback:
