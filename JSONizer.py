@@ -18,7 +18,7 @@ class JSONizer:
 	   "wazn_mismatch":wazn_mismatch,
 	   "cut_attempt_text":cut_attempt,
 	   "text_mismatch": text_mismatch,
-	   "tf3elat": tf3lat,
+	   "tf3elat": tf3lat if tf3lat else "(لم يعثر على تفعيلات)",
 	   "feedback":feedback,
 	   "wazn_name":wazn_name}
 		JSONizer.attempts.append(d)
