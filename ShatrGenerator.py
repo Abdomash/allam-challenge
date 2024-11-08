@@ -83,7 +83,7 @@ class ShatrGenerator:
 
     def cut_to_last_valid_word(self, shatr, first_mistake):
         if " " in shatr[:first_mistake]:
-            return shatr[:first_mistake].rsplit(" ", 1)[0]
+            return shatr[:first_mistake].rsplit(" ", 1)[0] + " " #add space (IMPORTANT)
         else:
             return ""
     

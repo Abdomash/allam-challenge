@@ -6,7 +6,7 @@ class JSONizer:
 	curr_shatr_num = 0
 	iter_nums = {} #dictionary of int->int
 	@staticmethod
-	def attempt(attempt_txt, aroodi_style, wazn_10, wazn_mismatch, cut_attempt):
+	def attempt(attempt_txt, aroodi_style, wazn_10, wazn_mismatch, cut_attempt, text_mismatch, tf3lat):
 		if JSONizer.curr_shatr_num not in JSONizer.iter_nums.keys():
 			JSONizer.iter_nums[JSONizer.curr_shatr_num] = 0
 		JSONizer.iter_nums[JSONizer.curr_shatr_num] += 1
@@ -16,7 +16,9 @@ class JSONizer:
 	   "aroodi_style":aroodi_style,
 	   "wazn_comb":wazn_10,
 	   "wazn_mismatch":wazn_mismatch,
-	   "cut_attempt_text":cut_attempt}
+	   "cut_attempt_text":cut_attempt,
+	   "text_mismatch": text_mismatch,
+	   "tf3elat": tf3lat}
 		JSONizer.attempts.append(d)
 	
 	@staticmethod

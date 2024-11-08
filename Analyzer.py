@@ -135,7 +135,10 @@ class Analyzer:
         #TODO: hamza ignore for now. can be done later
         #edge case with hamza+waw, hamza+alif maqsoora, ..
         #also needs RAG updating
-        return qafiya, wazn_name, combs, wazn_mismatch, output["diacritized"][-1], aroodi_indices
+
+        dia = output["diacritized"][-1]
+        dia = dia[:len(dia)//2]
+        return qafiya, wazn_name, combs, wazn_mismatch, dia, aroodi_indices, 
 
 
 if __name__ == "__main__":

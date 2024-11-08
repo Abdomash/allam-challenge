@@ -62,8 +62,8 @@ def generate_qasida(prompt, shatr_generator: ShatrGenerator, critic: CriticGen, 
 
 if __name__ == "__main__":
     api_key = os.environ.get("API_KEY")
-    llm = ALLAM_GENERATOR(api_key)
-    #llm = FakeGenerator(wazn="الكامل")
+    #llm = ALLAM_GENERATOR(api_key)
+    llm = FakeGenerator(wazn="الكامل")
     rag = Prompter(poet="عنترة بن شداد")
     critic = CriticGen(llm)
     #llm = FakeGenerator()
@@ -72,5 +72,5 @@ if __name__ == "__main__":
         prompt = input("Enter a prompt: ")
         if not prompt or prompt == "exit":
             break
-        qasida = generate_qasida(prompt, shatr_generator, critic, length=1, wazn="الكامل", qafiya="لا")
+        qasida = generate_qasida(prompt, shatr_generator, critic, length=2, wazn="الكامل", qafiya="لا")
         print(qasida)
