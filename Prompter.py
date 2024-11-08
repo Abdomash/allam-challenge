@@ -94,11 +94,11 @@ class Prompter:
 
         if plan == 1: #add instruction for plan the idea of the line, dont write it in meter form yet.
             full_text += '</s><s> [INST] '
-            full_text += "أريد كتابة بيت آخر يكمل القصيدة. أعطني فكرة جيدة للبيت. "
+            full_text += "أريد كتابة بيت آخر يكمل القصيدة. أعطني فكرة جيدة للبيت. " if previous_shatrs else "TODO"
             full_text += "[/INST]\n"
         elif plan == 2: #write bait using this plan. Add an instruction after all prev shatrs to get new gen
             full_text += '</s><s> [INST] '
-            full_text += "أريدك ان تكتب بيتا آخر ليكمل القصيدة. أريد البيت أن يكون عن هذه الفكرة: "
+            full_text += "أريدك ان تكتب بيتا آخر ليكمل القصيدة. أريد البيت أن يكون عن هذه الفكرة: " if previous_shatrs else "TODO"
             full_text += plan_txt
         
         if feedback: #feedback: list of {"bayt":[s0,s1], "feedback":"str"}
@@ -141,7 +141,9 @@ class Prompter:
                     raise KeyError()
             except KeyError:
                 print(f"Poet {self.poet['name']} does not have any poems in {wazn}")
-                self.poems = [item for sublist in self.poet['poems'].values() for item in sublist]
+                #self.poems = [item for sublist in self.poet['poems'].values() for item in sublist]
+                self.poems = [poem for poet in [self.poets["المتنبي"], self.poets["أحمد شوقي"]] for poem in poet["poems"][self.bohours[wazn]['name_en']]]
+                self.poems = [line for poem in self.poems for line in poem ]
         elif self.wazn is None:
             self.poems = [item for sublist in self.poet['poems'].values() for item in sublist]
 

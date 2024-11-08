@@ -95,7 +95,7 @@ if __name__ == '__main__':
         "type":"generate",
         "prompt":"اكتب قصيدة عن الوطن",
         "bahr":"الطويل",
-        "poet":"عنترة بن شداد",
+        "poet":"علام",
     })
     print(resp.data.decode())
 
