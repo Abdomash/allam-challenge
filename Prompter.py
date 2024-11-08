@@ -78,11 +78,10 @@ class Prompter:
         if prompt:
             full_text += f"{prompt}\n"
 
-        full_text += "[/INST] \n"
-
-        full_text += "هذه هي قصيدتي: " + '\n'
-
         if previous_shatrs:
+            full_text += "[/INST] \n"
+
+            full_text += "هذه هي قصيدتي: " + '\n'
             #full_text += "هنا الشطور السابقة:\n"
             #full_text += '\n'.join(previous_shatrs)
             if len(previous_shatrs) % 2 == 0:
@@ -92,15 +91,40 @@ class Prompter:
                 current_attempt = format_abyat([previous_shatrs[-1]]) + current_attempt
             #full_text += '\n'
 
-        if plan == 1: #add instruction for plan the idea of the line, dont write it in meter form yet.
-            full_text += '</s><s> [INST] '
-            full_text += " أريد كتابة بيت آخر يكمل القصيدة. أعطني فكرة جيدة للبيت واكتبها بلغة نثرية (كلام عادي). " if previous_shatrs else "TODO"
-            full_text += "[/INST] "
-        elif plan == 2: #write bait using this plan. Add an instruction after all prev shatrs to get new gen
-            full_text += '</s><s> [INST] '
-            full_text += "أريدك ان تكتب بيتا آخر ليكمل القصيدة. أريد البيت أن يكون عن هذه الفكرة: " if previous_shatrs else "TODO"
-            full_text += plan_txt
-            full_text += "[/INST] "
+            if plan == 1: #add instruction for plan the idea of the line, dont write it in meter form yet.
+                full_text += '</s><s> [INST] '
+                full_text += " أريد كتابة بيت آخر يكمل القصيدة. أعطني فكرة جيدة للبيت واكتبها بلغة نثرية (كلام عادي). "
+                full_text += "[/INST] "
+                full_text += "حسنا، هذه فكرتي لهذا البيت. يمكنك أن تنظم عليها بيتك بنفس وزن القصيدة: "
+                full_text += "\n\n" + '"'
+                #stop token = " string closer
+            elif plan == 2: #write bait using this plan. Add an instruction after all prev shatrs to get new gen
+                full_text += '</s><s> [INST] '
+                full_text += "أريدك ان تكتب بيتا آخر ليكمل القصيدة. أريد البيت أن يكون عن هذه الفكرة: "
+                full_text += plan_txt
+                full_text += "[/INST] "
+        else:
+            if plan == 1: #add instruction for plan the idea of the line, dont write it in meter form yet.
+                #full_text += '</s><s> [INST] '
+                full_text += " أريد كتابة البيت الذي يبدأ القصيدة (مطلع القصيدة). أعطني فكرة جيدة للبيت واكتبها بلغة نثرية (كلام عادي). "
+                full_text += "[/INST] "
+                full_text += "حسنا، هذه فكرتي لهذا البيت. يمكنك أن تنظم عليها بيتك بنفس وزن القصيدة: "
+                full_text += "\n\n" + '"'
+                #stop token = " string closer
+            elif plan == 2: #write bait using this plan. Add an instruction after all prev shatrs to get new gen
+                #full_text += '</s><s> [INST] '
+                full_text += "أريدك ان تكتب البيت الذي يبدأ القصيدة (مطلع القصيدة). أريد البيت أن يكون عن هذه الفكرة: "
+                full_text += plan_txt
+                #full_text += "[/INST] "
+                full_text += "[/INST] \n"
+
+                full_text += "هذه هو مطلع القصيدة: " + '\n'
+            else:
+                full_text += "[/INST] \n"
+
+                full_text += "هذه هي قصيدتي: " + '\n'
+
+
         
         if feedback: #feedback: list of {"bayt":[s0,s1], "feedback":"str"}
             for f in feedback:

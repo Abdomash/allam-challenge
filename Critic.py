@@ -94,7 +94,8 @@ class CriticGen:
 		prompt += "[/INST]  شكرا على سؤالك، هذه اقتراحاتي لتحسين البيت: "
 		prompt += "\n1. "
 
-		#print(prompt)
+		print("CRITIC PROMPT: ")
+		print(prompt)
 
         #TODO return points neatly formatted
 		gen_ = self.llm.generate(prompt, True)

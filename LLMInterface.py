@@ -48,7 +48,7 @@ class ALLAM_GENERATOR:
         self.parameters = {
             "decoding_method": "sample",
             "max_new_tokens": 15,
-            "min_new_tokens": 5,
+            "min_new_tokens": 3,
             "temperature": 0.3,
             "top_k": 40,
             #"top_p": 0.5,
@@ -59,9 +59,10 @@ class ALLAM_GENERATOR:
             "decoding_method": "greedy",
             "max_new_tokens": 250,
             #"stop_sequences": ["\n"],
+            "stop_sequences":[],
         }
 
-    def generate(self, prompt, is_critic=False, temp=None):
+    def generate(self, prompt, is_critic=False, temp=None, stop_tokens=[]):
         url = BASE_URL + "v1/text/generation?version=2024-08-30"
         body = {
             "input": prompt,
@@ -69,6 +70,8 @@ class ALLAM_GENERATOR:
             "project_id": self.project_id,
             "parameters": self.critic_parameters if is_critic else self.parameters
         }
+
+        body["parameters"]["stop_sequences"] += stop_tokens
 
         if temp:
             body["parameters"]["temperature"] = temp
@@ -118,5 +121,5 @@ class FakeGenerator:
         # cycle through the poem lines infinitely
         self.poem = itertools.cycle(random.choice(self.poems))
 
-    def generate(self, prompt=None, is_critic=False, temp=0.5):
+    def generate(self, prompt=None, is_critic=False, temp=0.5, stop_tokens=[]):
         return next(self.poem)
