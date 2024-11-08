@@ -29,7 +29,7 @@ shatr_generator = ShatrGenerator(llm, prompter=prompter, analyzer=analyzer)
 
 @app.route('/generate', methods=['GET'])
 def generate():
-    JSONizer.resetGenResponse()
+    JSONizer.resetResponse()
     user_input = request.form['prompt']
     selected_bahr = request.form['bahr']
     selected_poet = request.form['poet']
@@ -41,7 +41,7 @@ def generate():
 
 @app.route('/analyze', methods=['GET'])
 def analyze():
-    JSONizer.resetAnalyzerResponse()
+    JSONizer.resetResponse()
     shatrs = json.loads(request.form['shatrs'])
 
     print(shatrs)
@@ -57,10 +57,10 @@ def analyze():
         #TODO: move this to critic full
 
         #copied from generate_qasida
-        _, new_wazn_name1, new_wazn_combs1, new_wazn_mismatch1, diacritized1, arudi_indices1 = analyzer.extract(s_[0], expected_wazn_name=expected_wazn)
+        _, new_wazn_name1, new_wazn_combs1, new_wazn_mismatch1, diacritized1, arudi_indices1, tf3elat1, aroodi_writing1 = analyzer.extract(s_[0], expected_wazn_name=expected_wazn)
         expected_wazn = new_wazn_name1
 
-        new_qafiya, new_wazn_name2, new_wazn_combs2, new_wazn_mismatch2, diacritized2, arudi_indices2 = analyzer.extract(s_[1], expected_wazn_name=expected_wazn)
+        new_qafiya, new_wazn_name2, new_wazn_combs2, new_wazn_mismatch2, diacritized2, arudi_indices2, tf3elat2, aroodi_writing2 = analyzer.extract(s_[1], expected_wazn_name=expected_wazn)
 
         hardcoded_feedback = ""
 
@@ -68,8 +68,20 @@ def analyze():
 
         feedback = critic.critic(s_, prev_shatrs, None, hardcoded_feedback)
 
-        JSONizer.analysis(diacritized1, new_wazn_combs1, new_wazn_mismatch1, feedback["feedback"])
-        JSONizer.analysis(diacritized2, new_wazn_combs2, new_wazn_mismatch2, feedback["feedback"])
+        text_mis1 = arudi_indices1[new_wazn_mismatch1]
+        text_mis2 = arudi_indices2[new_wazn_mismatch2]
+
+        if new_wazn_mismatch1 == -1:
+            text_mis1 = -1
+        if new_wazn_mismatch2 == -1:
+            text_mis2 = -1
+
+        #JSONizer.analysis(diacritized1, new_wazn_combs1, new_wazn_mismatch1, feedback["feedback"], text_mis1, tf3elat1)
+        JSONizer.nextShatr()
+        JSONizer.attempt(diacritized1, aroodi_writing1, new_wazn_combs1, new_wazn_mismatch1, diacritized1, text_mis1, tf3elat1, new_wazn_name1, feedback=feedback["feedback"])
+        JSONizer.nextShatr()
+        JSONizer.attempt(diacritized2, aroodi_writing2, new_wazn_combs2, new_wazn_mismatch2, diacritized2, text_mis2, tf3elat2, new_wazn_name2, feedback=feedback["feedback"])
+        #JSONizer.analysis(diacritized2, new_wazn_combs2, new_wazn_mismatch2, feedback["feedback"], text_mis2, tf3elat2)
 
     return JSONizer.getAnalyzerResponse()
 
@@ -79,13 +91,13 @@ if __name__ == '__main__':
     #app.run(debug=True)
 
     c = app.test_client()
-    #resp = c.get('/generate', data={
-    #    "type":"generate",
-    #    "prompt":"اكتب قصيدة عن الوطن",
-    #    "bahr":"الكامل",
-    #    "poet":"المتنبي",
-    #})
-    #print(resp.data.decode())
+    resp = c.get('/generate', data={
+        "type":"generate",
+        "prompt":"اكتب قصيدة عن الوطن",
+        "bahr":"الطويل",
+        "poet":"علام",
+    })
+    print(resp.data.decode())
 
 
     print("---------")

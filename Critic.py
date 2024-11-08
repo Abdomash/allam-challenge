@@ -40,7 +40,7 @@ class CriticGen:
 		text += f" {expected_wazn}. "
 		return text
 	
-	def critic(self, bayt, prev_shatrs, prev_feedbacks = None, hardcoded_feedback=None): #bayt -> [shatr0, shatr1], prev_shatrs = [s0,s1,s2,s3,..], prev_feedbacks = for this specific bayt
+	def critic(self, bayt, prev_shatrs, prev_feedbacks = None, hardcoded_feedback=None, plan_txt=None): #bayt -> [shatr0, shatr1], prev_shatrs = [s0,s1,s2,s3,..], prev_feedbacks = for this specific bayt
 		prompt = "<s> [INST]<<SYS>>\n"
 		prompt += CRITIC_SYS
 		prompt += "\n<</SYS>>\n\n"
@@ -65,6 +65,9 @@ class CriticGen:
 					prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ " if more_than_single_line else "ما رأيك فيه؟"
 					prompt += "البيت المقصود هو: " if more_than_single_line else ""
 					prompt += format_abyat(f["bayt"]) if more_than_single_line else ""
+					if plan_txt:
+						prompt += "هذه هي الفكرة التي اردت صياغتها في هذا البيت: "
+						prompt += plan_txt
 					prompt += "[/INST]  شكرا على سؤالك، هذه هي اقتراحاتي لهذا البيت: " + '\n'
 					prompt += f["feedback"]
 					prompt += " </s><s> [INST] "
@@ -72,6 +75,9 @@ class CriticGen:
 				else:
 					prompt += "حسنا، أعدت كتابة البيت الأخير في قصيدتي. ما رأيك به الآن؟ " if more_than_single_line else  "حسنا، أعدت كتابة البيت. ما رأيك به الآن؟ "
 					prompt += '\n' + format_abyat(f["bayt"])
+					if plan_txt:
+						prompt += "هذه هي الفكرة التي اردت صياغتها في هذا البيت: "
+						prompt += plan_txt
 					prompt += "[/INST]  شكرا على سؤالك، هذه هي اقتراحاتي لهذا البيت الجديد: " + '\n'
 					prompt += f["feedback"]
 					prompt += " </s><s> [INST] "
@@ -79,6 +85,9 @@ class CriticGen:
 			prompt += '\n' + format_abyat(bayt)
 		else:
 			prompt += "ما رأيك في اخر بيت من هذه القصيدة؟ " if more_than_single_line else "ما رأيك فيه؟"
+			if plan_txt:
+				prompt += "هذه هي الفكرة التي اردت صياغتها في هذا البيت: "
+				prompt += plan_txt
 			prompt += "البيت المقصود هو: " if more_than_single_line else ""
 			prompt += format_abyat(bayt) if more_than_single_line else ""
 

@@ -6,7 +6,7 @@ class JSONizer:
 	curr_shatr_num = 0
 	iter_nums = {} #dictionary of int->int
 	@staticmethod
-	def attempt(attempt_txt, aroodi_style, wazn_10, wazn_mismatch, cut_attempt):
+	def attempt(attempt_txt, aroodi_style, wazn_10, wazn_mismatch, cut_attempt, text_mismatch, tf3lat, wazn_name, feedback=None):
 		if JSONizer.curr_shatr_num not in JSONizer.iter_nums.keys():
 			JSONizer.iter_nums[JSONizer.curr_shatr_num] = 0
 		JSONizer.iter_nums[JSONizer.curr_shatr_num] += 1
@@ -16,7 +16,11 @@ class JSONizer:
 	   "aroodi_style":aroodi_style,
 	   "wazn_comb":wazn_10,
 	   "wazn_mismatch":wazn_mismatch,
-	   "cut_attempt_text":cut_attempt}
+	   "cut_attempt_text":cut_attempt,
+	   "text_mismatch": text_mismatch,
+	   "tf3elat": tf3lat if tf3lat else "(لم يعثر على تفعيلات)",
+	   "feedback":feedback,
+	   "wazn_name":wazn_name}
 		JSONizer.attempts.append(d)
 	
 	@staticmethod
@@ -32,33 +36,19 @@ class JSONizer:
 		)
 
 	@staticmethod
-	def resetGenResponse():
+	def resetResponse():
 		JSONizer.attempts.clear()
 		JSONizer.curr_shatr_num = 0
 		JSONizer.iter_nums.clear() #dictionary of int->int
-	
-	@staticmethod
-	def analysis(shatr, wazn_10, wazn_mismatch, feedback):
-		d = {
-			"shatr_text":shatr,
-			"wazn_comb":wazn_10,
-			"wazn_mismatch":wazn_mismatch,
-			"feedback":feedback
-		}
-		JSONizer.analysis_res.append(d)
 	
 	@staticmethod
 	def getAnalyzerResponse():
 		return json.dumps(
 			{
 				"type":"analyze",
-				"analyzed_shatrs": JSONizer.analysis_res
+				"analyzed_shatrs": JSONizer.attempts
 			}
 		)
-
-	@staticmethod
-	def resetAnalyzerResponse():
-		JSONizer.analysis_res.clear()
 
 if __name__ == "__main__":
 	#JSONizer.attempt(32, 2, "hi", "hiii", "101011", "GGRRR")
