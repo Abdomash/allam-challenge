@@ -105,10 +105,10 @@ class Analyzer:
             return None, None, None, 0, "", [0] #big error, return empty results, regen bayt
 
         #qafiya_type = output["qafiyah"]
-        print(output["diacritized"][-1])
+        print(output["diacritized"][0])
         wazn_name = output["meter"]
-        aroodi_writing = output["arudi_style"][-1][0]
-        combs = output["arudi_style"][-1][1]
+        aroodi_writing = output["arudi_style"][0][0]
+        combs = output["arudi_style"][0][1]
         print(aroodi_writing)
 
         aroodi_indices = output["arudi_indices"][-1]
@@ -116,7 +116,7 @@ class Analyzer:
         closest_comb, _, _, wazn_name = self.get_closest_bahr(combs, True, expected_wazn_name) #0101
         print("ACTUAL:  " +combs)
         print("CLOSEST: "+closest_comb)
-        print("indices: "+str(output["arudi_indices"][-1]))
+        print("indices: "+str(output["arudi_indices"][0]))
         #wazn_mismatch = find_mismatch(closest_comb, combs, False)
         wazn_mismatch = self.get_first_mistake2(combs, closest_comb)
 
@@ -144,7 +144,7 @@ class Analyzer:
         #edge case with hamza+waw, hamza+alif maqsoora, ..
         #also needs RAG updating
 
-        dia = output["diacritized"][-1]
+        dia = output["diacritized"][0]
         dia = clean_bayt(dia[:len(dia)//2])
         tf3elat = output['closest_patterns'][-1][-1] #closest tf3elat detected
         return qafiya, wazn_name, combs, wazn_mismatch, dia, aroodi_indices, tf3elat, aroodi_writing

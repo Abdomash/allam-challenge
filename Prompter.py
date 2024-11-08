@@ -94,12 +94,13 @@ class Prompter:
 
         if plan == 1: #add instruction for plan the idea of the line, dont write it in meter form yet.
             full_text += '</s><s> [INST] '
-            full_text += "أريد كتابة بيت آخر يكمل القصيدة. أعطني فكرة جيدة للبيت. " if previous_shatrs else "TODO"
-            full_text += "[/INST]\n"
+            full_text += " أريد كتابة بيت آخر يكمل القصيدة. أعطني فكرة جيدة للبيت واكتبها بلغة نثرية (كلام عادي). " if previous_shatrs else "TODO"
+            full_text += "[/INST] "
         elif plan == 2: #write bait using this plan. Add an instruction after all prev shatrs to get new gen
             full_text += '</s><s> [INST] '
             full_text += "أريدك ان تكتب بيتا آخر ليكمل القصيدة. أريد البيت أن يكون عن هذه الفكرة: " if previous_shatrs else "TODO"
             full_text += plan_txt
+            full_text += "[/INST] "
         
         if feedback: #feedback: list of {"bayt":[s0,s1], "feedback":"str"}
             for f in feedback:

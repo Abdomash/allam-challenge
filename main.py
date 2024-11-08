@@ -28,7 +28,8 @@ def generate_qasida(prompt, shatr_generator: ShatrGenerator, critic: CriticGen, 
     for i in range(length): #length = abyat
         #plan bait
 
-        plan_txt = shatr_generator.llm.generate(shatr_generator.prompter.wrap_gen(prompt, shatrs, None, None, plan=1, ), is_critic=True)
+        #plan_txt = shatr_generator.llm.generate(shatr_generator.prompter.wrap_gen(prompt, shatrs, None, None, plan=1, ), is_critic=True)
+        plan_txt = None
 
         feedback = [] #list of feedbacks for current bayt
         curr_bayt = []
@@ -65,7 +66,8 @@ if __name__ == "__main__":
     api_key = os.environ.get("API_KEY")
     #llm = ALLAM_GENERATOR(api_key)
     llm = FakeGenerator(wazn="الكامل")
-    rag = Prompter(poet="عنترة بن شداد")
+    #rag = Prompter(poet="عنترة بن شداد")
+    rag = Prompter(poet = "المتنبي")
     critic = CriticGen(llm)
     #llm = FakeGenerator()
     shatr_generator = ShatrGenerator(llm, prompter=rag)

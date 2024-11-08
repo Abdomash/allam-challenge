@@ -77,10 +77,10 @@ def analyze():
             text_mis2 = -1
 
         #JSONizer.analysis(diacritized1, new_wazn_combs1, new_wazn_mismatch1, feedback["feedback"], text_mis1, tf3elat1)
+        JSONizer.nextShatr()
         JSONizer.attempt(diacritized1, aroodi_writing1, new_wazn_combs1, new_wazn_mismatch1, diacritized1, text_mis1, tf3elat1, new_wazn_name1, feedback=feedback["feedback"])
         JSONizer.nextShatr()
         JSONizer.attempt(diacritized2, aroodi_writing2, new_wazn_combs2, new_wazn_mismatch2, diacritized2, text_mis2, tf3elat2, new_wazn_name2, feedback=feedback["feedback"])
-        JSONizer.nextShatr()
         #JSONizer.analysis(diacritized2, new_wazn_combs2, new_wazn_mismatch2, feedback["feedback"], text_mis2, tf3elat2)
 
     return JSONizer.getAnalyzerResponse()
