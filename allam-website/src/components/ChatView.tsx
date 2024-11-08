@@ -2,6 +2,7 @@ import UserMessage from './UserMessage'
 import LLMResponse from './LLMResponse'
 import { cn } from '@/lib/utils'
 import { useChatLog } from '@/hooks/useChatLog'
+import { useEffect, useRef } from 'react'
 
 interface ChatViewProps {
   className?: string
@@ -10,22 +11,25 @@ interface ChatViewProps {
 export default function ChatView({ className }: ChatViewProps) {
   // use useChatLog hook to get the chat log
   const { chatLog } = useChatLog()
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight
+    }
+  }, [chatLog])
 
   return (
     <div
+      ref={containerRef}
       className={cn(
-        'relative w-full md:max-w-3xl flex flex-col gap-2',
+        'w-full pb-4 md:max-w-3xl flex flex-col gap-2 scroll-smooth',
         className,
       )}
     >
-      <h2 className="sticky top-2 text-center text-2xl font-bold">
-        تاريخ المحادثة
-      </h2>
-      <div className={cn('w-full md:max-w-3xl flex flex-col gap-4 p-4')}></div>
       {chatLog.map((entry) => (
-        <div className="flex w-full flex-col gap-2">
+        <div className="mb-4 flex w-full flex-col gap-2">
           <UserMessage request={entry.request} />
-          <LLMResponse response={entry.response} />
+          <LLMResponse response={entry.response} request={entry.request} />
         </div>
       ))}
     </div>

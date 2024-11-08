@@ -28,11 +28,10 @@ export interface UserMessageProps {
 }
 
 export default function UserMessage({ className, request }: UserMessageProps) {
-  console.log('request', request.type)
   return (
     <div
       className={cn(
-        'text-sm bg-primary p-2 rounded-md justify-start',
+        'text-sm bg-primary px-4 py-2 rounded-md justify-start w-fit',
         className,
       )}
     >

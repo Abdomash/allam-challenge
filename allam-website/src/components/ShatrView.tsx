@@ -4,10 +4,51 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import ColorizedText from './ColorizedText'
+
+function ShatrInfo({ attempt }: { attempt: Attempt }) {
+  const formatted_comb = attempt.wazn_comb
+    .replace(new RegExp('0', 'g'), 'ه')
+    .replace(new RegExp('1', 'g'), '/')
+
+  return (
+    <DropdownMenuItem>
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger className="w-full justify-end">
+          <div className="w-full text-right">{attempt.attempt_text}</div>
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent>
+          <DropdownMenuLabel className="text-center">الوزن</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <ColorizedText
+              className="text-right"
+              text={'\u200f' + formatted_comb}
+              mistakeIndex={attempt.wazn_mismatch}
+            />
+          </DropdownMenuItem>
+          <DropdownMenuItem className="justify-center">
+            {attempt.tf3elat === '(لم يعثر على تفعيلات)' ? (
+              <span className="text-center">{attempt.tf3elat}</span>
+            ) : (
+              <ColorizedText
+                text={attempt.tf3elat}
+                mistakeIndex={attempt.wazn_mismatch}
+              />
+            )}
+          </DropdownMenuItem>
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+    </DropdownMenuItem>
+  )
+}
 
 export interface ShatrViewProps {
   attempts: Attempt[]
@@ -15,31 +56,26 @@ export interface ShatrViewProps {
 
 export default function ShatrView({ attempts }: ShatrViewProps) {
   // sort attempts by iteration number
-  attempts.sort((a, b) => a.iteration_number - b.iteration_number)
-
-  const lastAttempt = attempts[attempts.length - 1].attempt_text
+  const sortedAttempts = [...attempts].sort(
+    (a, b) => a.iteration_number - b.iteration_number,
+  )
 
   return (
     <div className="min-w-8">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="w-full text-justify">
-            {lastAttempt}
+            {sortedAttempts[sortedAttempts.length - 1].attempt_text}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-max">
-          {attempts.map((attempt, i) => (
+          <DropdownMenuLabel className="pb-1 text-center">
+            المحاولات
+          </DropdownMenuLabel>
+          {sortedAttempts.map((attempt) => (
             <>
-              {/* <DropdownMenuItem>{attempt.attempt_text}</DropdownMenuItem>
-              <DropdownMenuItem>{attempt.cut_attempt_text}</DropdownMenuItem> */}
-              <DropdownMenuItem className="justify-end">
-                <ColorizedText
-                  text={attempt.attempt_text}
-                  mistakeIndex={attempt.wazn_mismatch}
-                />
-                {i + 1}
-              </DropdownMenuItem>
-              {i + 1 < attempts.length && <DropdownMenuSeparator />}
+              <DropdownMenuSeparator />
+              <ShatrInfo attempt={attempt} />
             </>
           ))}
         </DropdownMenuContent>

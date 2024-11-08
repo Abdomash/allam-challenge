@@ -13,6 +13,7 @@ export function LandingPage() {
       </h1>
       <QueryClientProvider client={queryClient}>
         <ChatLogProvider>
+          <h1 className="text-center text-2xl font-bold">سجل المحادثة</h1>
           <ChatView className="flex-1 overflow-y-auto" />
           <RequestGenerationForm className="sticky bottom-4" />
         </ChatLogProvider>

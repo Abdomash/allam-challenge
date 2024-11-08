@@ -15,7 +15,10 @@ export type Attempt = {
   aroodi_style: string
   wazn_comb: string
   wazn_mismatch: number
+  tf3elat: string
   cut_attempt_text: string
+  feedback?: string
+  wazn_name: string
 }
 
 export type ApiGenerateResponse = {
@@ -35,16 +38,9 @@ export type ApiAnalyzeRequest = {
   shatrs: string[]
 }
 
-export type AnalyzedShatr = {
-  feedback: string
-  shatr_text: string
-  wazn_comb: string
-  wazn_mismatch: string
-}
-
 export type ApiAnalyzeResponse = {
   type: 'analyze'
-  analyzed_shatrs: AnalyzedShatr[]
+  analyzed_shatrs: Attempt[]
 }
 
 export type Poet = (typeof Poets)[number]

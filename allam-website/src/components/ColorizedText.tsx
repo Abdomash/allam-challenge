@@ -1,11 +1,13 @@
 export interface ColorizedTextProps {
   text: string
   mistakeIndex: number
+  className?: string
 }
 
 export default function ColorizedText({
   text,
   mistakeIndex,
+  className,
 }: ColorizedTextProps) {
   if (mistakeIndex < 0 || mistakeIndex >= text.length) {
     return <div>{text}</div>
@@ -20,7 +22,7 @@ export default function ColorizedText({
   }
 
   return (
-    <div>
+    <div className={className}>
       {text.split('').map((char, i) => {
         return (
           <span key={i} className={index_to_color(i)}>

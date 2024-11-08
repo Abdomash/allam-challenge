@@ -2,12 +2,17 @@ import { cn } from '@/lib/utils'
 import { Skeleton } from './ui/skeleton'
 import CyclingText from './CyclingText'
 import { LoadingResponseTextAnimated } from '@/lib/constants'
-import { ApiAnalyzeResponse, ApiGenerateResponse } from '@/lib/types'
+import {
+  ApiAnalyzeRequest,
+  ApiAnalyzeResponse,
+  ApiGenerateRequest,
+  ApiGenerateResponse,
+} from '@/lib/types'
 import GenerateResponse from './GenerateResponse'
 import AnalyzeResponse from './AnalyzeResponse'
 import { Loader2Icon } from 'lucide-react'
+import { Badge } from './ui/badge'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function LoadingResponse({ className }: { className?: string }) {
   return (
     <div className={cn('flex flex-col gap-2 items-end', className)}>
@@ -31,18 +36,42 @@ function LoadingResponse({ className }: { className?: string }) {
 interface LLMResponseProps {
   className?: string
   response: ApiGenerateResponse | ApiAnalyzeResponse | undefined
+  request: ApiAnalyzeRequest | ApiGenerateRequest
 }
 
-export default function LLMResponse({ response, className }: LLMResponseProps) {
+export default function LLMResponse({
+  response,
+  className,
+  request,
+}: LLMResponseProps) {
+  if (!response) {
+    return <LoadingResponse />
+  }
+
+  const poetRequested = request.type == 'generate' ? request.poet : 'المستخدم'
+  const wazn_name =
+    response.type == 'generate'
+      ? response.attempts[0].wazn_name
+      : response.analyzed_shatrs[0].wazn_name
+
+  const responseComponent =
+    response.type === 'analyze' ? (
+      <AnalyzeResponse response={response} />
+    ) : (
+      <GenerateResponse response={response} />
+    )
+
   return (
-    <div className={cn(className)}>
-      {response === undefined && <LoadingResponse />}
-      {response && response.type === 'analyze' && (
-        <AnalyzeResponse response={response} />
-      )}
-      {response && response.type === 'generate' && (
-        <GenerateResponse response={response} />
-      )}
+    <div className={cn('flex flex-col w-full gap-2 items-end', className)}>
+      <div className="flex flex-row gap-3">
+        <Badge variant="outline" className="bg-primary">
+          الشاعر: {poetRequested}
+        </Badge>
+        <Badge variant="outline" className="bg-secondary">
+          بحر {wazn_name}
+        </Badge>
+      </div>
+      {responseComponent}
     </div>
   )
 }
