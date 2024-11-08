@@ -19,7 +19,7 @@ export default function GenerateResponse({ response }: GenerateResponseProps) {
   )
 
   return (
-    <div className="flex flex-col items-end gap-2">
+    <div className="grid grid-cols-2 gap-2">
       {shatrAttempts.map((attempts, i) => (
         <ShatrView key={i} attempts={attempts} />
       ))}

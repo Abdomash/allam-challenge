@@ -13,9 +13,15 @@ export default function ChatView({ className }: ChatViewProps) {
 
   return (
     <div
-      className={cn('w-full md:max-w-3xl flex flex-col gap-4 p-4 ', className)}
+      className={cn(
+        'relative w-full md:max-w-3xl flex flex-col gap-2',
+        className,
+      )}
     >
-      <h2 className="text-center text-2xl font-bold">تاريخ المحادثة</h2>
+      <h2 className="sticky top-2 text-center text-2xl font-bold">
+        تاريخ المحادثة
+      </h2>
+      <div className={cn('w-full md:max-w-3xl flex flex-col gap-4 p-4')}></div>
       {chatLog.map((entry) => (
         <div className="flex w-full flex-col gap-2">
           <UserMessage request={entry.request} />

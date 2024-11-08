@@ -5,16 +5,20 @@ import { LoadingResponseTextAnimated } from '@/lib/constants'
 import { ApiAnalyzeResponse, ApiGenerateResponse } from '@/lib/types'
 import GenerateResponse from './GenerateResponse'
 import AnalyzeResponse from './AnalyzeResponse'
+import { Loader2Icon } from 'lucide-react'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function LoadingResponse({ className }: { className?: string }) {
   return (
     <div className={cn('flex flex-col gap-2 items-end', className)}>
-      <CyclingText
-        className="pl-4"
-        strings={LoadingResponseTextAnimated}
-        interval={3000}
-      />
+      <div className="flex flex-row items-end gap-2">
+        <CyclingText
+          className="pl-4"
+          strings={LoadingResponseTextAnimated}
+          interval={3000}
+        />
+        <Loader2Icon className="size-6 animate-spin bg-transparent" />
+      </div>
       <Skeleton className="grid h-28 w-72 grid-cols-2 gap-4 rounded-md bg-secondary p-4">
         {Array.from(Array(6).keys()).map(() => (
           <Skeleton className="h-4 w-full rounded-md bg-gray-400" />

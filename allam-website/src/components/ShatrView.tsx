@@ -17,26 +17,29 @@ export default function ShatrView({ attempts }: ShatrViewProps) {
   // sort attempts by iteration number
   attempts.sort((a, b) => a.iteration_number - b.iteration_number)
 
+  const lastAttempt = attempts[attempts.length - 1].attempt_text
+
   return (
-    <div className="flex flex-col items-end gap-2">
+    <div className="min-w-8">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="secondary">
-            {attempts[attempts.length - 1].cut_attempt_text}
+          <Button variant="ghost" className="w-full text-justify">
+            {lastAttempt}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-max">
-          {attempts.map((attempt) => (
+          {attempts.map((attempt, i) => (
             <>
               {/* <DropdownMenuItem>{attempt.attempt_text}</DropdownMenuItem>
               <DropdownMenuItem>{attempt.cut_attempt_text}</DropdownMenuItem> */}
-              <DropdownMenuItem>
+              <DropdownMenuItem className="justify-end">
                 <ColorizedText
                   text={attempt.attempt_text}
                   mistakeIndex={attempt.wazn_mismatch}
                 />
+                {i + 1}
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              {i + 1 < attempts.length && <DropdownMenuSeparator />}
             </>
           ))}
         </DropdownMenuContent>
