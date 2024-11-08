@@ -54,7 +54,7 @@ def generate_qasida(prompt, shatr_generator: ShatrGenerator, critic: CriticGen, 
                 print("WAZN FEEDBACK")
                 hard_coded_feedback.append(critic.hard_coded_wazn_feedback(wazn))
 
-            feedback.append(critic.critic(curr_bayt, shatrs, feedback, hard_coded_feedback))
+            feedback.append(critic.critic(curr_bayt, shatrs, feedback, hard_coded_feedback, plan_txt=plan_txt))
             print("FEEDBACK: "+feedback[-1]["feedback"])
         shatrs.extend(curr_bayt) #get last attempt and store it
 
