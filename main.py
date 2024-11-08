@@ -22,12 +22,13 @@ def generate_qasida(prompt, shatr_generator: ShatrGenerator, critic: CriticGen, 
     wazn = wazn or infer_wazn(prompt)
     qafiya = qafiya or infer_qafiya(prompt)
     length = length or infer_length(prompt)
+    JSONizer.resetResponse()
     
     shatrs = []
     for i in range(length): #length = abyat
         #plan bait
 
-        plan_txt = llm.generate(shatr_generator.prompter.wrap_gen(prompt, shatrs, None, None, plan=1, ), is_critic=True)
+        plan_txt = shatr_generator.llm.generate(shatr_generator.prompter.wrap_gen(prompt, shatrs, None, None, plan=1, ), is_critic=True)
 
         feedback = [] #list of feedbacks for current bayt
         curr_bayt = []

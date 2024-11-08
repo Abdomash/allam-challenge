@@ -1,14 +1,6 @@
 from JSONizer import JSONizer
-from Analyzer import Analyzer
+from Analyzer import Analyzer, clean_bayt
 from Prompter import Prompter
-
-from LLMInterface import BAYT_SEPARATORS
-
-def clean_bayt(bait): #cleans / removes *,/,newline,. etc from bayt
-    new_b = bait
-    for i in BAYT_SEPARATORS:
-        new_b = new_b.replace(i, "")
-    return new_b.strip()
 
 class ShatrGenerator:
     def __init__(self, llm, prompter=None, analyzer=None):
@@ -42,9 +34,7 @@ class ShatrGenerator:
             print("----------------------")
             print(f"attempt {iters}: {shatr}")
             # Extract Wazn and Qafiya
-            new_qafiya, new_wazn_name, new_wazn_combs, new_wazn_mismatch, diacritized, arudi_indices = self.analyzer.extract(shatr, expected_wazn_name=wazn)
-            
-            diacritized = clean_bayt(diacritized)
+            new_qafiya, new_wazn_name, new_wazn_combs, new_wazn_mismatch, diacritized, arudi_indices, tf3elat, aroodi_style = self.analyzer.extract(shatr, expected_wazn_name=wazn)
 
             if wazn is None:
                 wazn = new_wazn_name
@@ -72,14 +62,14 @@ class ShatrGenerator:
 
                 new_shatr = self.cut_to_last_valid_word(diacritized, index_to_delete) #harakat means length of diacritized is double!
                 print(f"cut shatr: {new_shatr}")
-                JSONizer.attempt(diacritized, "aroodi", new_wazn_combs, new_wazn_mismatch, new_shatr)
+                JSONizer.attempt(diacritized, aroodi_style, new_wazn_combs, new_wazn_mismatch, new_shatr, index_to_delete, tf3elat, new_wazn_name, feedback=None)
                 continue # Loop back to regenerate
             
-            JSONizer.attempt(diacritized, "aroodi", new_wazn_combs, new_wazn_mismatch, "") #no mistake?
+            JSONizer.attempt(diacritized, aroodi_style, new_wazn_combs, new_wazn_mismatch, diacritized, -1, tf3elat, new_wazn_name, feedback=None) #no mistake?
             valid = True
         
         print(f"wazn: {new_wazn_name}, qafiya: {qafiya}")
-        return clean_bayt(shatr), new_wazn_name, qafiya, valid
+        return shatr, new_wazn_name, qafiya, valid
 
     def cut_to_last_valid_word(self, shatr, first_mistake):
         if " " in shatr[:first_mistake]:

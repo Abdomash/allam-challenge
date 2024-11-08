@@ -4,6 +4,14 @@ sys.path.append("qawafi/qawafi_server/Arabic_Diacritization") #lib should be ...
 sys.path.append("qawafi/qawafi_server")
 sys.path.append("qawafi/qawafi_server/Bohour")
 
+from LLMInterface import BAYT_SEPARATORS
+
+def clean_bayt(bait): #cleans / removes *,/,newline,. etc from bayt
+    new_b = bait
+    for i in BAYT_SEPARATORS:
+        new_b = new_b.replace(i, "")
+    return new_b.strip()
+
 from qawafi_server.bait_analysis import BaitAnalysis
 from qawafi_server.utils import (
     BOHOUR_NAMES,
@@ -137,8 +145,9 @@ class Analyzer:
         #also needs RAG updating
 
         dia = output["diacritized"][-1]
-        dia = dia[:len(dia)//2]
-        return qafiya, wazn_name, combs, wazn_mismatch, dia, aroodi_indices, 
+        dia = clean_bayt(dia[:len(dia)//2])
+        tf3elat = output['closest_patterns'][-1][-1] #closest tf3elat detected
+        return qafiya, wazn_name, combs, wazn_mismatch, dia, aroodi_indices, tf3elat, aroodi_writing
 
 
 if __name__ == "__main__":
