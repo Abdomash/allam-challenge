@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Changa:wght@200..800&family=Noto+Naskh+Arabic:wght@400..700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  :root {
+    --background: 35 100% 95%;
+    --foreground: 35 5% 10%;
+    --card: 35 50% 90%;
+    --card-foreground: 35 5% 15%;
+    --popover: 35 100% 95%;
+    --popover-foreground: 35 100% 10%;
+    --primary: 35 77% 76%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 35 30% 89%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: -3 30% 89%;
+    --muted-foreground: 35 5% 40%;
+    --accent: -3 30% 89%;
+    --accent-foreground: 35 5% 15%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 35 5% 90%;
+    --border: 35 30% 82%;
+    --input: 35 30% 50%;
+    --ring: 35 77% 76%;
+    --radius: 1rem;
+  }
+  .dark {
+    --background: 35 50% 10%;
+    --foreground: 35 5% 90%;
+    --card: 35 50% 10%;
+    --card-foreground: 35 5% 90%;
+    --popover: 35 50% 5%;
+    --popover-foreground: 35 5% 90%;
+    --primary: 35 77% 76%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 35 30% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: -3 30% 25%;
+    --muted-foreground: 35 5% 65%;
+    --accent: -3 30% 25%;
+    --accent-foreground: 35 5% 90%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 35 5% 90%;
+    --border: 35 30% 50%;
+    --input: 35 30% 50%;
+    --ring: 35 77% 76%;
+    --radius: 1rem;
+  }
+}
+@layer base {
+  html {
+    direction: rtl;
+    font-family: 'Amiri', serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.25rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-gradient-to-r from-orange-200 via-orange-50 to-orange-200;
+  }
+}
