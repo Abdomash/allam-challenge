@@ -8,3 +8,5 @@ CA_MSA.base.cbhg
 model.zip
 deep-learning-models.zip
 .env
+node_modules
+.vite
