@@ -32,6 +32,9 @@ interface SelectMenuProps {
   items: string[]
 }
 
+import example2 from './generate_new.json'
+// import example2 from './analyze_new.json'
+
 function SelectMenu({ form, name, label, items }: SelectMenuProps) {
   return (
     <FormField
@@ -81,20 +84,29 @@ export default function GenerationForm({ className }: GenerationFormProps) {
 
   const mutation = useMutation({
     mutationFn: async (data: ApiGenerateRequest) => {
-      const response = await fetch('/api/generate', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-      return response.json()
+      // const response = await fetch('/api/generate', {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(data),
+      // })
+      // console.log('ERROR', response.json())
+      console.log(data)
+
+      // Implement a json.parse of example to use ApiGenerateResponse
+      return example2
     },
     onMutate: async (data) => {
-      addEntry({ type: 'generate', request: data, response: undefined })
+      addEntry({
+        type: 'generate',
+        request: { ...data, type: 'generate' },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        response: example2 as any,
+      })
     },
     onSuccess: (responseData) => {
-      updateLastEntry(responseData)
+      console.log('responseData', responseData)
       form.reset()
     },
     onError: () => {
