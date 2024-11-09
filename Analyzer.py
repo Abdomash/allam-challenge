@@ -48,8 +48,8 @@ class Analyzer:
         #1010 actual, 110 ideal, error in -3
         #1110 actual, 1010 ideal, error in -3
         if max_match_len >= len(comb)-3: #if max_match is in last or before last ok! (check total length tho)
-            if len(comb) > len(ideal)+3: #ignore deleting 1 (110 -> 10), or adding 10
-                return len(ideal)//2 #mistake is in too big of a length
+            if len(comb) > len(ideal)+5: #ignore deleting 1 (110 -> 10), or adding 10
+                return len(ideal)//3 #mistake is in too big of a length
             if len(comb)+3 < len(ideal): #too short, even after deleting (1110110 -> 1110)
                 return too_little #special meaning too little gen!
             return no_error

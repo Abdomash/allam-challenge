@@ -28,12 +28,13 @@ def generate_qasida(prompt, shatr_generator: ShatrGenerator, critic: CriticGen, 
     for i in range(length): #length = abyat
         #plan bait
         print("PLANNING SHATR CODE GOES HERE: ")
-        if i > :
+        if i > 0:
             plan_txt = shatr_generator.llm.generate(shatr_generator.prompter.wrap_gen(prompt, shatrs, None, None, plan=1, ), is_critic=True, stop_tokens=['"'])
+            print("PLANNED RESULT OF THE BAYT: "+plan_txt)
         else:
-            plan_txt = ""
+            plan_txt = None
 
-        print("PLANNED RESULT OF THE BAYT: "+plan_txt)
+        
 
         feedback = [] #list of feedbacks for current bayt
         curr_bayt = []

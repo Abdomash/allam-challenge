@@ -24,7 +24,7 @@ class ShatrGenerator:
 
         plan = 2 if plan_txt else 0
 
-        while not valid and iters < 10:
+        while not valid and iters < 5:
             print(f"Temp: {temp}")
             iters += 1
             # Generate a shatr

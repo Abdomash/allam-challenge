@@ -5,12 +5,12 @@ import json
 from flask import Flask, request
 
 from JSONizer import *
-from LLMInterface import FakeGenerator
+from LLMInterface import FakeGenerator, ALLAM_GENERATOR
 from ShatrGenerator import ShatrGenerator
 from Prompter import Prompter, format_abyat
 from Critic import CriticGen, CriticChat
 from Analyzer import Analyzer
-from main import generate_qasida
+from main import generate_qasida, load_env
 from Data import load_poets, load_bohours
 
 # Initialize The Flask App
@@ -22,7 +22,11 @@ app = Flask(__name__)
 prompter = Prompter()
 analyzer = Analyzer()
 
-llm = FakeGenerator()
+load_env(".env")
+
+#llm = FakeGenerator()
+api_key = os.environ.get("API_KEY")
+llm = ALLAM_GENERATOR(api_key)
 
 critic = CriticGen(llm=llm)
 shatr_generator = ShatrGenerator(llm, prompter=prompter, analyzer=analyzer)
