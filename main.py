@@ -28,7 +28,7 @@ def generate_qasida(prompt, shatr_generator: ShatrGenerator, critic: CriticGen, 
     for i in range(length): #length = abyat
         #plan bait
         print("PLANNING SHATR CODE GOES HERE: ")
-        if i > 0:
+        if i > :
             plan_txt = shatr_generator.llm.generate(shatr_generator.prompter.wrap_gen(prompt, shatrs, None, None, plan=1, ), is_critic=True, stop_tokens=['"'])
         else:
             plan_txt = ""
@@ -70,8 +70,8 @@ if __name__ == "__main__":
     api_key = os.environ.get("API_KEY")
     llm = ALLAM_GENERATOR(api_key)
     #llm = FakeGenerator(wazn="الكامل")
-    #rag = Prompter(poet="عنترة بن شداد")
-    rag = Prompter(poet = "المتنبي")
+    rag = Prompter(poet="عنترة بن شداد")
+    #rag = Prompter(poet = "أحمد شوقي")
     critic = CriticGen(llm)
     #llm = FakeGenerator()
     shatr_generator = ShatrGenerator(llm, prompter=rag)
@@ -79,5 +79,5 @@ if __name__ == "__main__":
         prompt = input("Enter a prompt: ")
         if not prompt or prompt == "exit":
             break
-        qasida = generate_qasida(prompt, shatr_generator, critic, length=2, wazn="الكامل", qafiya="لا")
+        qasida = generate_qasida(prompt, shatr_generator, critic, length=3, wazn="الكامل", qafiya="لا")
         print(qasida)

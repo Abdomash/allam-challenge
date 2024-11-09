@@ -24,7 +24,7 @@ class ShatrGenerator:
 
         plan = 2 if plan_txt else 0
 
-        while not valid and iters < 5:
+        while not valid and iters < 10:
             print(f"Temp: {temp}")
             iters += 1
             # Generate a shatr
@@ -49,13 +49,13 @@ class ShatrGenerator:
                 if last_mistake < new_wazn_mismatch: #reached new point!
                     last_repeats = 0
                     last_mistake = new_wazn_mismatch
-                    temp = 0.3 #reset temp back to low val
+                    temp = 0.2 #reset temp back to low val
                     #iters -= 1 #give it some more room to gen
                 else:
                     last_repeats += 1
                     if last_repeats > 2: #got stuck a number of times
                         index_to_delete = 0 #restart whole generation.
-                        temp *= 1.5 #2 iters wrong, -> temp 0.45 ->, 4 iters 0.675 ->, 6 iters 1.01
+                        #temp *= 1.5 #2 iters wrong, -> temp 0.45 ->, 4 iters 0.675 ->, 6 iters 1.01
                         #iters -= 1
                         #increase temperature too.
 

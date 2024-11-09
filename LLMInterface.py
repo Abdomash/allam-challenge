@@ -30,6 +30,8 @@ class OpenAI_Generator:
 
 BAYT_SEPARATORS = ["\n", "*", "#", '/', '.']
 
+import copy
+
 class ALLAM_GENERATOR:
     def __init__(self, API_KEY):
         self.model_id = "sdaia/allam-1-13b-instruct"
@@ -64,19 +66,25 @@ class ALLAM_GENERATOR:
 
     def generate(self, prompt, is_critic=False, temp=None, stop_tokens=[]):
         url = BASE_URL + "v1/text/generation?version=2024-08-30"
+        params = copy.deepcopy(self.critic_parameters if is_critic else self.parameters)
+
+        params["stop_sequences"] = stop_tokens
         body = {
             "input": prompt,
             "model_id": self.model_id,
             "project_id": self.project_id,
-            "parameters": self.critic_parameters if is_critic else self.parameters
+            "parameters": params
         }
 
-        body["parameters"]["stop_sequences"] += stop_tokens
+        #body["parameters"]["stop_sequences"] = stop_tokens
 
-        if temp:
-            body["parameters"]["temperature"] = temp
+        if not is_critic:
+            if temp:
+                body["parameters"]["temperature"] = temp
+            else:
+                body["parameters"]["temperature"] = 0.3
         else:
-            body["parameters"]["temperature"] = 0.3
+            body["parameters"]["temperature"] = 0.0
         
         response = requests.post(url, headers=self.headers, json=body)
         response.raise_for_status()
