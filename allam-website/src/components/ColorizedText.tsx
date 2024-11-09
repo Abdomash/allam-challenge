@@ -10,14 +10,14 @@ export default function ColorizedText({
   className,
 }: ColorizedTextProps) {
   if (mistakeIndex < 0 || mistakeIndex >= text.length) {
-    return <div>{text}</div>
+    return <div className="text-green-600">{text}</div>
   }
 
   const index_to_color = (idx: number) => {
     if (Math.abs(idx - mistakeIndex) <= 1) {
       return 'text-red-500'
     } else {
-      return 'text-green-500'
+      return 'text-green-600'
     }
   }
 

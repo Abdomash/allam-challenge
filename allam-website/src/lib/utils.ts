@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function generateRandomId(): string {
   return Date.now().toString()
 }
+
+export function format_combinations(text: string): string {
+  return text.replace(/0/g, 'ه').replace(/1/g, '/')
+}

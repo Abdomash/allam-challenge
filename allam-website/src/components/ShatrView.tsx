@@ -12,12 +12,9 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import ColorizedText from './ColorizedText'
+import { format_combinations } from '@/lib/utils'
 
 function ShatrInfo({ attempt }: { attempt: Attempt }) {
-  const formatted_comb = attempt.wazn_comb
-    .replace(new RegExp('0', 'g'), 'ه')
-    .replace(new RegExp('1', 'g'), '/')
-
   return (
     <DropdownMenuItem>
       <DropdownMenuSub>
@@ -30,7 +27,7 @@ function ShatrInfo({ attempt }: { attempt: Attempt }) {
           <DropdownMenuItem>
             <ColorizedText
               className="text-right"
-              text={'\u200f' + formatted_comb}
+              text={'\u200f' + format_combinations(attempt.wazn_comb)}
               mistakeIndex={attempt.wazn_mismatch}
             />
           </DropdownMenuItem>

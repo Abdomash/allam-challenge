@@ -64,12 +64,16 @@ export default function LLMResponse({
   return (
     <div className={cn('flex flex-col w-full gap-2 items-end', className)}>
       <div className="flex flex-row gap-3">
-        <Badge variant="outline" className="bg-primary">
-          الشاعر: {poetRequested}
+        <Badge
+          variant="outline"
+          className={
+            response.type === 'analyze' ? 'bg-primary' : 'bg-secondary'
+          }
+        >
+          {response.type === 'analyze' ? 'نمط المحلل' : 'نمط التوليد'}
         </Badge>
-        <Badge variant="outline" className="bg-secondary">
-          بحر {wazn_name}
-        </Badge>
+        <Badge className="bg-secondary">الشاعر: {poetRequested}</Badge>
+        <Badge className="bg-secondary">بحر {wazn_name}</Badge>
       </div>
       {responseComponent}
     </div>

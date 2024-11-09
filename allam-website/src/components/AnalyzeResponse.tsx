@@ -1,4 +1,5 @@
 import { ApiAnalyzeResponse } from '@/lib/types'
+import AnalysisShatrView from './AnalysisShatrView'
 
 export interface AnalyzeResponseProps {
   response: ApiAnalyzeResponse
@@ -6,10 +7,10 @@ export interface AnalyzeResponseProps {
 
 export default function AnalyzeResponse({ response }: AnalyzeResponseProps) {
   return (
-    <div className="flex flex-col items-end gap-2">
-      <p>{response.feedback}</p>
-      <p>{response.wazn_comb}</p>
-      <p>{response.wazn_mismatch}</p>
+    <div className="grid grid-cols-2 gap-2 rounded-lg bg-primary p-4">
+      {response.analyzed_shatrs.map((attempt) => (
+        <AnalysisShatrView key={attempt.shatr_idx} attempt={attempt} />
+      ))}
     </div>
   )
 }
