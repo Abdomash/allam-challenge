@@ -9,7 +9,7 @@ export function LandingPage() {
   return (
     <div className="flex h-screen flex-col items-center justify-center p-4">
       <h1 className="sticky mb-8 text-center font-['Changa'] text-4xl font-bold">
-        الناقد علام
+        مهندس الكلمة
       </h1>
       <QueryClientProvider client={queryClient}>
         <ChatLogProvider>
