@@ -1,21 +1,27 @@
 import { ApiGenerateResponse, Attempt } from '@/lib/types'
 import ShatrView from './ShatrView'
+import { useMemo } from 'react'
+
+function groupAttemptsByShatrIdx(attempts: Attempt[]) {
+  return attempts
+    .sort((a, b) => a.iteration_number - b.iteration_number)
+    .reduce((acc, attempt) => {
+      const shatrIdx: number = attempt.shatr_idx
+
+      if (!acc[shatrIdx]) acc[shatrIdx] = []
+      acc[shatrIdx].push(attempt)
+      return acc
+    }, [] as Attempt[][])
+}
 
 export interface GenerateResponseProps {
   response: ApiGenerateResponse
 }
 
 export default function GenerateResponse({ response }: GenerateResponseProps) {
-  // Reorder attempts by shatr_idx and make it an Attempt[][]
-  const shatrAttempts: Attempt[][] = response.attempts.reduce(
-    (acc, attempt) => {
-      const shatrIdx: number = attempt.shatr_idx
-
-      if (!acc[shatrIdx]) acc[shatrIdx] = []
-      acc[shatrIdx].push(attempt)
-      return acc
-    },
-    [] as Attempt[][],
+  const shatrAttempts = useMemo(
+    () => groupAttemptsByShatrIdx(response.attempts),
+    [response.attempts],
   )
 
   return (

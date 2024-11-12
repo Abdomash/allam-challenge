@@ -26,8 +26,8 @@ export default function ChatView({ className }: ChatViewProps) {
         className,
       )}
     >
-      {chatLog.map((entry) => (
-        <div className="mb-4 flex w-full flex-col gap-2">
+      {chatLog.map((entry, i) => (
+        <div key={i} className="mb-4 flex w-full flex-col gap-2">
           <UserMessage request={entry.request} />
           <LLMResponse response={entry.response} request={entry.request} />
         </div>

@@ -13,13 +13,14 @@ import {
 } from './ui/dropdown-menu'
 import ColorizedText from './ColorizedText'
 import { format_combinations } from '@/lib/utils'
+import React from 'react'
 
 function ShatrInfo({ attempt }: { attempt: Attempt }) {
   return (
     <DropdownMenuItem>
       <DropdownMenuSub>
         <DropdownMenuSubTrigger className="w-full justify-end">
-          <div className="w-full text-right">{attempt.attempt_text}</div>
+          <span className="w-full text-right">{attempt.attempt_text}</span>
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent>
           <DropdownMenuLabel className="text-center">الوزن</DropdownMenuLabel>
@@ -52,31 +53,24 @@ export interface ShatrViewProps {
 }
 
 export default function ShatrView({ attempts }: ShatrViewProps) {
-  // sort attempts by iteration number
-  const sortedAttempts = [...attempts].sort(
-    (a, b) => a.iteration_number - b.iteration_number,
-  )
-
   return (
-    <div className="min-w-8">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="w-full text-justify">
-            {sortedAttempts[sortedAttempts.length - 1].attempt_text}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-max">
-          <DropdownMenuLabel className="pb-1 text-center">
-            المحاولات
-          </DropdownMenuLabel>
-          {sortedAttempts.map((attempt) => (
-            <>
-              <DropdownMenuSeparator />
-              <ShatrInfo attempt={attempt} />
-            </>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="w-full text-justify">
+          {attempts[attempts.length - 1].attempt_text}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-max">
+        <DropdownMenuLabel className="pb-1 text-center">
+          المحاولات
+        </DropdownMenuLabel>
+        {attempts.map((attempt, i) => (
+          <React.Fragment key={i}>
+            <DropdownMenuSeparator />
+            <ShatrInfo attempt={attempt} />
+          </React.Fragment>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

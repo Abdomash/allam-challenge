@@ -54,12 +54,17 @@ export default function LLMResponse({
       ? response.attempts[0].wazn_name
       : response.analyzed_shatrs[0].wazn_name
 
-  const responseComponent =
-    response.type === 'analyze' ? (
+  const ResponseComponent = ({
+    response,
+  }: {
+    response: ApiAnalyzeResponse | ApiGenerateResponse
+  }) => {
+    return response.type === 'analyze' ? (
       <AnalyzeResponse response={response} />
     ) : (
       <GenerateResponse response={response} />
     )
+  }
 
   return (
     <div className={cn('flex flex-col w-full gap-2 items-end', className)}>
@@ -75,7 +80,7 @@ export default function LLMResponse({
         <Badge className="bg-secondary">الشاعر: {poetRequested}</Badge>
         <Badge className="bg-secondary">بحر {wazn_name}</Badge>
       </div>
-      {responseComponent}
+      <ResponseComponent response={response} />
     </div>
   )
 }
