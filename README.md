@@ -21,7 +21,7 @@ Our project aims to improve the quality of AI Arabic poetry generation by using 
 
 ### Chain of Thought
 
-With **chain-of-thought**, the model is able to set a plan for its poem before generating it, and also iteratively critic its own generation. This technique reduces the amount of linguistic errors and increases the response's relevancy to the user prompt.
+With **chain-of-thought**, the model is able to set a plan for its poem before generating it, and also iteratively critique its own generation. This technique reduces the amount of linguistic errors and increases the response's relevancy to the user prompt.
 
 ### Trial and Error
 
